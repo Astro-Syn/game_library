@@ -1,7 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from database import engine
 
 app = FastAPI()
+
+try:
+    with engine.connect() as connection:
+        print("Database connection successful!")
+except Exception as error:
+    print("Database connection failed:", error)
+
 
 app.add_middleware(
     CORSMiddleware,
