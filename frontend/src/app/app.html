@@ -1,5 +1,12 @@
 <h1>Game Library</h1>
 
-<button (click)="getMessage()">Talk to Python</button>
+<button (click)="getGames()">Load Games</button>
+
+<div *ngFor="let game of games">
+  <h2>{{ game.title }}</h2>
+  <p>Genre: {{ game.genre}}</p>
+  <p>Platform: {{ game.platform}}</p>
+
+</div>
 
 <router-outlet />

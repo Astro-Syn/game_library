@@ -20,7 +20,11 @@ class GameCreate(BaseModel):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=[
+        "http://localhost:4200",
+         "http://localhost:53351"
+
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,3 +54,54 @@ def create_game(game: GameCreate):
     db.close()
 
     return new_game
+
+@app.get("/api/games")
+def get_games():
+
+    db: Session = SessionLocal()
+
+    games = db.query(Game).all()
+
+    db.close()
+
+    return games
+
+@app.put("/api/games/{game_id}")
+def update_game(game_id: int, game: GameCreate):
+
+    db: Session = SessionLocal()
+
+    existing_game = db.query(Game).filter(Game.id == game_id).first()
+
+    if existing_game is None:
+        db.close()
+        return {"error": "Game not found"}
+
+    existing_game.title = game.title
+    existing_game.genre = game.genre
+    existing_game.platform = game.platform
+
+    db.commit()
+    db.refresh(existing_game)
+
+    db.close()
+
+    return existing_game
+
+@app.delete("/api/games/{game_id}")
+def delete_game(game_id: int):
+
+    db: Session = SessionLocal()
+
+    existing_game = db.query(Game).filter(Game.id == game_id).first()
+
+    if existing_game is None:
+        db.close()
+        return {"error": "Game not found"}
+
+    db.delete(existing_game)
+    db.commit()
+
+    db.close()
+
+    return {"message": "Game deleted successfully"}
