@@ -26,6 +26,15 @@ export class App {
     platform: ''
   };
 
+
+  editingGameId: number | null = null;
+
+editGame = {
+  title: '',
+  genre: '',
+  platform: ''
+};
+
   constructor(private gameService: GameService) {}
 
   getGames() {
@@ -53,5 +62,39 @@ export class App {
     .subscribe(() => {
       this.games = this.games.filter(game => game.id !== id);
     });
+}
+
+startEditing(game: Game) {
+  this.editingGameId = game.id;
+
+  this.editGame = {
+    title: game.title,
+    genre: game.genre ?? '',
+    platform: game.platform ?? ''
+  };
+}
+
+updateGame(id: number) {
+  this.gameService.updateGame(id, this.editGame)
+    .subscribe(response => {
+
+      const index = this.games.findIndex(game => game.id === id);
+
+      if (index !== -1) {
+        this.games[index] = response;
+      }
+
+      this.cancelEditing();
+    });
+}
+
+cancelEditing() {
+  this.editingGameId = null;
+
+  this.editGame = {
+    title: '',
+    genre: '',
+    platform: ''
+  };
 }
 }

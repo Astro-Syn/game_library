@@ -6,6 +6,14 @@ from sqlalchemy.orm import Session
 from database import engine, SessionLocal
 from models import Base, Game
 
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+RAWG_API_KEY = os.getenv("RAWG_API_KEY")
+
 
 app = FastAPI()
 
@@ -35,6 +43,20 @@ app.add_middleware(
 def hello():
     return {"message": "Hello from Python!"}
 
+
+@app.get("/api/games/search")
+def search_games(query: str):
+
+    url = "https://api.rawg.io/api/games"
+
+    params = {
+        "key": RAWG_API_KEY,
+        "search": query
+    }
+
+    response = requests.get(url, params=params)
+
+    return response.json()
 
 @app.post("/api/games")
 def create_game(game: GameCreate):

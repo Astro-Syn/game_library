@@ -31,11 +31,49 @@
 <h2>My Games</h2>
 
 <div *ngFor="let game of games">
-  <h3>{{ game.title }}</h3>
-  <p>Genre: {{ game.genre }}</p>
-  <p>Platform: {{ game.platform }}</p>
 
-  <button (click)="deleteGame(game.id)">Delete</button>
+  <div *ngIf="editingGameId !== game.id">
+
+    <h3>{{ game.title }}</h3>
+
+    <p>Genre: {{ game.genre }}</p>
+    <p>Platform: {{ game.platform }}</p>
+
+    <button (click)="startEditing(game)">Edit</button>
+    <button (click)="deleteGame(game.id)">Delete</button>
+
+  </div>
+
+
+  <div *ngIf="editingGameId === game.id">
+
+    <h3>Edit Game</h3>
+
+    <input
+      type="text"
+      [(ngModel)]="editGame.title"
+      placeholder="Game title"
+    >
+
+    <input
+      type="text"
+      [(ngModel)]="editGame.genre"
+      placeholder="Genre"
+    >
+
+    <input
+      type="text"
+      [(ngModel)]="editGame.platform"
+      placeholder="Platform"
+    >
+
+    <button (click)="updateGame(game.id)">Save</button>
+    <button (click)="cancelEditing()">Cancel</button>
+
+  </div>
+
+  <hr>
+
 </div>
 
 <router-outlet />

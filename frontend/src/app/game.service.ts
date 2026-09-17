@@ -27,4 +27,15 @@ export class GameService {
   deleteGame(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  updateGame(
+  id: number,
+  game: {
+    title: string;
+    genre: string;
+    platform: string;
+  }
+) {
+  return this.http.put<Game>(`${this.apiUrl}/${id}`, game);
+}
 }
