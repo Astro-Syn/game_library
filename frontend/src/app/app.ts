@@ -19,6 +19,9 @@ export class App {
   protected readonly title = signal('Game Library');
 
   games: Game[] = [];
+  searchResults: any[] = [];
+  searchQuery = '';
+
 
   newGame = {
     title: '',
@@ -96,5 +99,30 @@ cancelEditing() {
     genre: '',
     platform: ''
   };
+}
+
+searchGames() {
+  if (!this.searchQuery.trim()) {
+    this.searchResults = [];
+    return;
+  }
+
+  this.gameService.searchGames(this.searchQuery)
+    .subscribe(response => {
+      this.searchResults = response;
+    });
+}
+
+addToLibrary(game: any) {
+  const newGame = {
+    title: game.title,
+    genre: '',
+    platform: ''
+  };
+
+  this.gameService.addGame(newGame)
+  .subscribe(response => {
+    this.games.push(response)
+  })
 }
 }

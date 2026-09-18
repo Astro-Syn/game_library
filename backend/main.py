@@ -44,6 +44,8 @@ def hello():
     return {"message": "Hello from Python!"}
 
 
+
+
 @app.get("/api/games/search")
 def search_games(query: str):
 
@@ -56,7 +58,22 @@ def search_games(query: str):
 
     response = requests.get(url, params=params)
 
-    return response.json()
+    data = response.json()
+
+    games = []
+
+    for game in data["results"]:
+        games.append({
+            "id": game["id"],
+            "title": game["name"],
+            "release_date": game["released"],
+            "rating": game["rating"],
+            "image": game["background_image"]
+        })
+
+    return games
+
+
 
 @app.post("/api/games")
 def create_game(game: GameCreate):
@@ -76,6 +93,7 @@ def create_game(game: GameCreate):
     db.close()
 
     return new_game
+
 
 @app.get("/api/games")
 def get_games():

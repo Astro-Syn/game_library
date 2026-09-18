@@ -13,3 +13,4 @@ class Game(Base):
     title = Column(String, nullable=False)
     genre = Column(String)
     platform = Column(String)
+    release_date = Column(String)

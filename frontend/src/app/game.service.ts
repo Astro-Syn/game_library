@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { Game } from './game';
 
 @Injectable({
@@ -38,4 +37,11 @@ export class GameService {
 ) {
   return this.http.put<Game>(`${this.apiUrl}/${id}`, game);
 }
+
+searchGames(query: string) {
+  return this.http.get<any[]>(
+    `http://localhost:8000/api/games/search?query=${encodeURIComponent(query)}`
+  );
+}
+
 }
