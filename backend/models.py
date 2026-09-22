@@ -16,3 +16,4 @@ class Game(Base):
     release_date = Column(String)
     rating = Column(Float)
     image = Column(String)
+    rawg_id = Column(Integer)

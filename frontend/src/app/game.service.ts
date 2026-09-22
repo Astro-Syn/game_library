@@ -22,6 +22,7 @@ export class GameService {
     release_date: string;
     rating: number | null;
     image: string | null;
+    rawg_id: number | null;
   }) {
     return this.http.post<Game>(this.apiUrl, game);
   }
@@ -39,6 +40,7 @@ export class GameService {
     release_date: string | null;
     rating: number | null;
     image: string | null;
+    rawg_id: number | null;
 
   }
 ) {

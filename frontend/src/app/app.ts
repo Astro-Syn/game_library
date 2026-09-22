@@ -29,7 +29,8 @@ export class App {
     platform: '',
     release_date: '',
     rating: null as number | null,
-    image: ''
+    image: '',
+    rawg_id: null as number | null
   };
 
 
@@ -41,7 +42,8 @@ editGame = {
   platform: '',
   release_date: null as string | null,
   rating: null as number | null,
-  image: null as string | null
+  image: null as string | null,
+  rawg_id: null as number | null
 
 };
 
@@ -65,7 +67,8 @@ editGame = {
         platform: '',
         release_date: '',
         rating: null,
-        image: ''
+        image: '',
+        rawg_id: null 
         
       };
     });
@@ -87,7 +90,8 @@ startEditing(game: Game) {
   platform: game.platform ?? '',
   release_date: game.release_date,
   rating: game.rating,
-  image: game.image
+  image: game.image,
+  rawg_id: game.rawg_id
 };
 }
 
@@ -114,7 +118,8 @@ cancelEditing() {
   platform: '',
   release_date: null,
   rating: null,
-  image: null
+  image: null,
+  rawg_id: null
 };
 }
 
@@ -137,7 +142,8 @@ addToLibrary(game: any) {
     platform: '',
     release_date: game.release_date,
     rating: game.rating,
-    image: game.image
+    image: game.image,
+    rawg_id: game.rawg_id
   };
 
   this.gameService.addGame(newGame)

@@ -25,6 +25,7 @@ class GameCreate(BaseModel):
     release_date: str | None = None
     rating: float | None = None
     image: str | None = None
+    rawg_id: int | None = None
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,7 +66,7 @@ def search_games(query: str):
 
     for game in data["results"]:
         games.append({
-            "id": game["id"],
+            "rawg_id": game["id"],
             "title": game["name"],
             "release_date": game["released"],
             "rating": game["rating"],
@@ -81,13 +82,21 @@ def create_game(game: GameCreate):
 
     db: Session = SessionLocal()
 
+    if game.rawg_id is not None:
+        existing_game = db.query(Game).filter(Game.rawg_id == game.rawg_id).first()
+
+        if existing_game:
+            db.close()
+            return {"error": "Game already in library"}
+
     new_game = Game(
         title=game.title,
         genre=game.genre,
         platform=game.platform,
         release_date=game.release_date,
         rating=game.rating,
-        image=game.image
+        image=game.image,
+        rawg_id=game.rawg_id
         
     )
 
@@ -128,6 +137,7 @@ def update_game(game_id: int, game: GameCreate):
     existing_game.release_date = game.release_date
     existing_game.rating = game.rating
     existing_game.image = game.image
+    existing_game.rawg_id = game.rawg_id
 
     db.commit()
     db.refresh(existing_game)

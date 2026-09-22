@@ -63,8 +63,11 @@
 
 </div>
 
+<div class="game-grid">
 
-<div *ngFor="let game of games">
+
+
+<div class="game-card" *ngFor="let game of games">
 
   <div *ngIf="editingGameId !== game.id">
 
@@ -114,6 +117,7 @@
     <button (click)="updateGame(game.id)">Save</button>
     <button (click)="cancelEditing()">Cancel</button>
 
+    </div>
   </div>
 
   <hr>

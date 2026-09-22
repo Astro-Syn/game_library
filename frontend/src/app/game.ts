@@ -6,4 +6,6 @@ export interface Game {
     release_date: string | null;
     rating: number | null;
     image: string | null;
+    rawg_id: number | null;
+    
 }
