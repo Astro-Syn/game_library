@@ -3,4 +3,7 @@ export interface Game {
     title: string;
     genre: string | null;
     platform: string | null;
+    release_date: string | null;
+    rating: number | null;
+    image: string | null;
 }

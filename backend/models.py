@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from database import engine
 from sqlalchemy.orm import declarative_base
 
@@ -14,3 +14,5 @@ class Game(Base):
     genre = Column(String)
     platform = Column(String)
     release_date = Column(String)
+    rating = Column(Float)
+    image = Column(String)

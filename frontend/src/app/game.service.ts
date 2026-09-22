@@ -19,6 +19,9 @@ export class GameService {
     title: string;
     genre: string;
     platform: string;
+    release_date: string;
+    rating: number | null;
+    image: string | null;
   }) {
     return this.http.post<Game>(this.apiUrl, game);
   }
@@ -33,6 +36,10 @@ export class GameService {
     title: string;
     genre: string;
     platform: string;
+    release_date: string | null;
+    rating: number | null;
+    image: string | null;
+
   }
 ) {
   return this.http.put<Game>(`${this.apiUrl}/${id}`, game);

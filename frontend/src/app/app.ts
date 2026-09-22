@@ -26,7 +26,10 @@ export class App {
   newGame = {
     title: '',
     genre: '',
-    platform: ''
+    platform: '',
+    release_date: '',
+    rating: null as number | null,
+    image: ''
   };
 
 
@@ -35,7 +38,11 @@ export class App {
 editGame = {
   title: '',
   genre: '',
-  platform: ''
+  platform: '',
+  release_date: null as string | null,
+  rating: null as number | null,
+  image: null as string | null
+
 };
 
   constructor(private gameService: GameService) {}
@@ -55,7 +62,11 @@ editGame = {
       this.newGame = {
         title: '',
         genre: '',
-        platform: ''
+        platform: '',
+        release_date: '',
+        rating: null,
+        image: ''
+        
       };
     });
 }
@@ -70,11 +81,14 @@ editGame = {
 startEditing(game: Game) {
   this.editingGameId = game.id;
 
-  this.editGame = {
-    title: game.title,
-    genre: game.genre ?? '',
-    platform: game.platform ?? ''
-  };
+ this.editGame = {
+  title: game.title,
+  genre: game.genre ?? '',
+  platform: game.platform ?? '',
+  release_date: game.release_date,
+  rating: game.rating,
+  image: game.image
+};
 }
 
 updateGame(id: number) {
@@ -95,10 +109,13 @@ cancelEditing() {
   this.editingGameId = null;
 
   this.editGame = {
-    title: '',
-    genre: '',
-    platform: ''
-  };
+  title: '',
+  genre: '',
+  platform: '',
+  release_date: null,
+  rating: null,
+  image: null
+};
 }
 
 searchGames() {
@@ -117,7 +134,10 @@ addToLibrary(game: any) {
   const newGame = {
     title: game.title,
     genre: '',
-    platform: ''
+    platform: '',
+    release_date: game.release_date,
+    rating: game.rating,
+    image: game.image
   };
 
   this.gameService.addGame(newGame)

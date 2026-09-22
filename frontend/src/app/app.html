@@ -70,8 +70,18 @@
 
     <h3>{{ game.title }}</h3>
 
+    <img
+      *ngIf="game.image"
+      [src]="game.image"
+      [alt]="game.title"
+      width="300"
+
+    >
+
     <p>Genre: {{ game.genre }}</p>
     <p>Platform: {{ game.platform }}</p>
+    <p>Release Date: {{ game.release_date }}</p>
+    <p>Rating: {{ game.rating }}</p>
 
     <button (click)="startEditing(game)">Edit</button>
     <button (click)="deleteGame(game.id)">Delete</button>

@@ -2,10 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-
 from database import engine, SessionLocal
 from models import Base, Game
-
 import os
 import requests
 from dotenv import load_dotenv
@@ -24,13 +22,16 @@ class GameCreate(BaseModel):
     title: str
     genre: str | None = None
     platform: str | None = None
-
+    release_date: str | None = None
+    rating: float | None = None
+    image: str | None = None
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:4200",
-         "http://localhost:53351"
+         "http://localhost:53351",
+         "http://localhost:64495"
 
         ],
     allow_credentials=True,
@@ -83,7 +84,11 @@ def create_game(game: GameCreate):
     new_game = Game(
         title=game.title,
         genre=game.genre,
-        platform=game.platform
+        platform=game.platform,
+        release_date=game.release_date,
+        rating=game.rating,
+        image=game.image
+        
     )
 
     db.add(new_game)
@@ -120,6 +125,9 @@ def update_game(game_id: int, game: GameCreate):
     existing_game.title = game.title
     existing_game.genre = game.genre
     existing_game.platform = game.platform
+    existing_game.release_date = game.release_date
+    existing_game.rating = game.rating
+    existing_game.image = game.image
 
     db.commit()
     db.refresh(existing_game)
