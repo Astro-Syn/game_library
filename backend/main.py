@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -85,9 +85,12 @@ def create_game(game: GameCreate):
     if game.rawg_id is not None:
         existing_game = db.query(Game).filter(Game.rawg_id == game.rawg_id).first()
 
-        if existing_game:
-            db.close()
-            return {"error": "Game already in library"}
+    if existing_game:
+        db.close()
+        raise HTTPException(
+            status_code=409,
+            detail="Game already in library"
+    )
 
     new_game = Game(
         title=game.title,

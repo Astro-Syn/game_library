@@ -67,7 +67,13 @@
 
 
 
-<div class="game-card" *ngFor="let game of games">
+<div class="game-item" *ngFor="let game of games">
+
+  <div
+    class="game-card"
+    [class.expanded]="expandedGameId === game.id"
+    (click)="toggleGameInfo(game.id)"
+  >
 
   <div *ngIf="editingGameId !== game.id">
 
@@ -113,11 +119,27 @@
       [(ngModel)]="editGame.platform"
       placeholder="Platform"
     >
-
     <button (click)="updateGame(game.id)">Save</button>
     <button (click)="cancelEditing()">Cancel</button>
 
     </div>
+  </div>
+
+  <div
+    class="game-info"
+    *ngIf="expandedGameId === game.id"
+  >
+
+    <h3>{{ game.title }}</h3>
+
+    <p><strong>Genre:</strong> {{ game.genre }}</p>
+
+    <p><strong>Platform:</strong> {{ game.platform }}</p>
+
+    <p><strong>Release Date:</strong> {{ game.release_date }}</p>
+
+    <p><strong>Rating:</strong> {{ game.rating }}</p>
+
   </div>
 
   <hr>

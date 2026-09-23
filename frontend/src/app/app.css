@@ -1,10 +1,11 @@
 .game-card {
-  width: 400px;
-  padding: 10px;
+  width: 300px;
+  padding: 20px;
   margin: 20px 0;
   border: 1px solid #ccc;
   border-radius: 10px;
   background: #f5f5f5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .game-card img {
@@ -18,4 +19,48 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 25px;
+}
+
+.game-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.game-info {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #ffffff;
+  box-sizing: border-box;
+
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.game-card.expanded {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 700px) {
+  .game-item {
+    flex-direction: column;
+  }
+
+  .game-info {
+    width: 300px;
+  }
 }

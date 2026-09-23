@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { Game } from './game';
 import { GameService } from './game.service';
 
@@ -18,7 +18,16 @@ export class App {
 
   protected readonly title = signal('Game Library');
 
+  toggleGameInfo(id: number) {
+  if (this.expandedGameId === id) {
+    this.expandedGameId = null;
+  } else {
+    this.expandedGameId = id;
+  }
+}
+
   games: Game[] = [];
+  expandedGameId: number | null = null;
   searchResults: any[] = [];
   searchQuery = '';
 
@@ -147,8 +156,15 @@ addToLibrary(game: any) {
   };
 
   this.gameService.addGame(newGame)
-  .subscribe(response => {
-    this.games.push(response)
-  })
+    .subscribe({
+      next: response => {
+        this.games.push(response);
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 409) {
+          alert('This game is already in your library!');
+        }
+      }
+    });
 }
 }
