@@ -30,6 +30,18 @@ export class App {
   expandedGameId: number | null = null;
   searchResults: any[] = [];
   searchQuery = '';
+  librarySearchQuery = '';
+  libraryPlatformFilter = '';
+
+
+  get libraryPlatforms(): string[] {
+  return [...new Set(
+    this.games
+      .map(game => game.platform)
+      .filter((platform): platform is string => !!platform)
+  )];
+}
+
 
 
   newGame = {
@@ -63,6 +75,24 @@ editGame = {
     .subscribe(response => {
       this.games = response;
     });
+}
+
+
+get filteredGames(): Game[] {
+  const query = this.librarySearchQuery.trim().toLowerCase();
+
+  return this.games.filter(game => {
+
+    const matchesSearch =
+      !query ||
+      game.title.toLowerCase().includes(query);
+
+    const matchesPlatform =
+      !this.libraryPlatformFilter ||
+      game.platform === this.libraryPlatformFilter;
+
+    return matchesSearch && matchesPlatform;
+  });
 }
 
   addGame() {
