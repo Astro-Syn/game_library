@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, Boolean, String, Float
 from database import engine
 from sqlalchemy.orm import declarative_base
 
@@ -17,3 +17,4 @@ class Game(Base):
     rating = Column(Float)
     image = Column(String)
     rawg_id = Column(Integer)
+    favorite = Column(Boolean, default=False)

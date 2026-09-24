@@ -32,6 +32,8 @@ export class App {
   searchQuery = '';
   librarySearchQuery = '';
   libraryPlatformFilter = '';
+  librarySort = '';
+  libraryGenreFilter = '';
 
 
   get libraryPlatforms(): string[] {
@@ -40,6 +42,17 @@ export class App {
       .map(game => game.platform)
       .filter((platform): platform is string => !!platform)
   )];
+}
+
+get libraryGenres(): string[] {
+  const genres = this.games
+    .flatMap(game =>
+      game.genre
+        ? game.genre.split(',').map(genre => genre.trim())
+        : []
+    );
+
+  return [...new Set(genres)];
 }
 
 
@@ -81,7 +94,7 @@ editGame = {
 get filteredGames(): Game[] {
   const query = this.librarySearchQuery.trim().toLowerCase();
 
-  return this.games.filter(game => {
+  let filtered = this.games.filter(game => {
 
     const matchesSearch =
       !query ||
@@ -91,8 +104,38 @@ get filteredGames(): Game[] {
       !this.libraryPlatformFilter ||
       game.platform === this.libraryPlatformFilter;
 
-    return matchesSearch && matchesPlatform;
+      const matchesGenre =
+  !this.libraryGenreFilter ||
+  game.genre?.split(',').map(genre => genre.trim()).includes(this.libraryGenreFilter);
+
+    return matchesSearch && matchesPlatform && matchesGenre;
   });
+
+  if (this.librarySort === 'rating-desc') {
+    filtered = [...filtered].sort(
+      (a, b) => (b.rating ?? 0) - (a.rating ?? 0)
+    );
+  }
+
+  if (this.librarySort === 'rating-asc') {
+    filtered = [...filtered].sort(
+      (a, b) => (a.rating ?? 0) - (b.rating ?? 0)
+    );
+  }
+
+  if (this.librarySort === 'title-asc') {
+    filtered = [...filtered].sort(
+      (a, b) => a.title.localeCompare(b.title)
+    );
+  }
+
+  if (this.librarySort === 'title-desc') {
+    filtered = [...filtered].sort(
+      (a, b) => b.title.localeCompare(a.title)
+    );
+  }
+
+  return filtered;
 }
 
   addGame() {
@@ -177,7 +220,7 @@ searchGames() {
 addToLibrary(game: any) {
   const newGame = {
     title: game.title,
-    genre: '',
+    genre: game.genre,
     platform: '',
     release_date: game.release_date,
     rating: game.rating,

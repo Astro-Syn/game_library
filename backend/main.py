@@ -26,6 +26,7 @@ class GameCreate(BaseModel):
     rating: float | None = None
     image: str | None = None
     rawg_id: int | None = None
+    favorite: bool = False
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,13 +66,16 @@ def search_games(query: str):
     games = []
 
     for game in data["results"]:
-        games.append({
-            "rawg_id": game["id"],
-            "title": game["name"],
-            "release_date": game["released"],
-            "rating": game["rating"],
-            "image": game["background_image"]
-        })
+       games.append({
+    "rawg_id": game["id"],
+    "title": game["name"],
+    "genre": ", ".join(
+        genre["name"] for genre in game["genres"]
+    ),
+    "release_date": game["released"],
+    "rating": game["rating"],
+    "image": game["background_image"]
+})
 
     return games
 

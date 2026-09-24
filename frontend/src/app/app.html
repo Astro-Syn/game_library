@@ -47,6 +47,39 @@
   </option>
 </select>
 
+<select [(ngModel)]="libraryGenreFilter">
+  <option value="">All Genres</option>
+
+  <option
+    *ngFor="let genre of libraryGenres"
+    [value]="genre"
+  >
+    {{ genre }}
+  </option>
+</select>
+
+<select [(ngModel)]="librarySort">
+
+  <option value="">Default</option>
+
+  <option value="rating-desc">
+    Rating: High → Low
+  </option>
+
+  <option value="rating-asc">
+    Rating: Low → High
+  </option>
+
+  <option value="title-asc">
+    Title: A → Z
+  </option>
+
+  <option value="title-desc">
+    Title: Z → A
+  </option>
+
+</select>
+
 
 <h2>Search Games</h2>
 
@@ -61,6 +94,8 @@
 <div *ngFor="let game of searchResults">
 
   <h3>{{ game.title }}</h3>
+
+  <p>Genre: {{ game.genre }}</p>
 
   <p>Release Date: {{ game.release_date }}</p>
 
