@@ -7,5 +7,6 @@ export interface Game {
     rating: number | null;
     image: string | null;
     rawg_id: number | null;
+    favorite: boolean;
     
 }

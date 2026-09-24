@@ -145,6 +145,9 @@
     <p>Rating: {{ game.rating }}</p>
 
     <button (click)="startEditing(game)">Edit</button>
+   <button (click)="toggleFavorite(game)">
+  {{ game.favorite ? '⭐' : '☆' }}
+</button>
     <button (click)="deleteGame(game.id)">Delete</button>
 
   </div>

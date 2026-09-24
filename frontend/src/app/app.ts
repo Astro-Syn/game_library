@@ -26,6 +26,8 @@ export class App {
   }
 }
 
+
+
   games: Game[] = [];
   expandedGameId: number | null = null;
   searchResults: any[] = [];
@@ -64,7 +66,8 @@ get libraryGenres(): string[] {
     release_date: '',
     rating: null as number | null,
     image: '',
-    rawg_id: null as number | null
+    rawg_id: null as number | null,
+    favorite: false
   };
 
 
@@ -77,7 +80,8 @@ editGame = {
   release_date: null as string | null,
   rating: null as number | null,
   image: null as string | null,
-  rawg_id: null as number | null
+  rawg_id: null as number | null,
+  favorite: false
 
 };
 
@@ -150,7 +154,8 @@ get filteredGames(): Game[] {
         release_date: '',
         rating: null,
         image: '',
-        rawg_id: null 
+        rawg_id: null,
+        favorite: false
         
       };
     });
@@ -163,6 +168,21 @@ get filteredGames(): Game[] {
     });
 }
 
+toggleFavorite(game: Game) {
+  game.favorite = !game.favorite;
+
+  this.gameService.updateGame(game.id, {
+    title: game.title,
+    genre: game.genre ?? '',
+    platform: game.platform ?? '',
+    release_date: game.release_date,
+    rating: game.rating,
+    image: game.image,
+    rawg_id: game.rawg_id,
+    favorite: game.favorite
+  }).subscribe();
+}
+
 startEditing(game: Game) {
   this.editingGameId = game.id;
 
@@ -173,7 +193,8 @@ startEditing(game: Game) {
   release_date: game.release_date,
   rating: game.rating,
   image: game.image,
-  rawg_id: game.rawg_id
+  rawg_id: game.rawg_id,
+  favorite: game.favorite
 };
 }
 
@@ -201,7 +222,8 @@ cancelEditing() {
   release_date: null,
   rating: null,
   image: null,
-  rawg_id: null
+  rawg_id: null,
+  favorite: false
 };
 }
 
@@ -225,7 +247,8 @@ addToLibrary(game: any) {
     release_date: game.release_date,
     rating: game.rating,
     image: game.image,
-    rawg_id: game.rawg_id
+    rawg_id: game.rawg_id,
+    favorite: false
   };
 
   this.gameService.addGame(newGame)

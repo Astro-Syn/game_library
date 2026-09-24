@@ -103,7 +103,8 @@ def create_game(game: GameCreate):
         release_date=game.release_date,
         rating=game.rating,
         image=game.image,
-        rawg_id=game.rawg_id
+        rawg_id=game.rawg_id,
+        favorite=game.favorite
         
     )
 
@@ -145,6 +146,7 @@ def update_game(game_id: int, game: GameCreate):
     existing_game.rating = game.rating
     existing_game.image = game.image
     existing_game.rawg_id = game.rawg_id
+    existing_game.favorite = game.favorite
 
     db.commit()
     db.refresh(existing_game)
