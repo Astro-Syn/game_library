@@ -1,8 +1,16 @@
+<div class="app-container">
+
+
+
 <h1>Game Library</h1>
 
 <button (click)="getGames()">Load Games</button>
 
 <hr>
+
+<div class="control-panel">
+
+
 
 <h2>Add a Game</h2>
 
@@ -25,8 +33,14 @@
 >
 
 <button (click)="addGame()">Add Game</button>
+</div>
+
 
 <hr>
+
+<div class="control-panel">
+
+
 
 <h2>My Games</h2>
 
@@ -79,6 +93,12 @@
   </option>
 
 </select>
+
+</div>
+
+
+<div class="control-panel">
+
 
 
 <h2>Search Games</h2>
@@ -144,8 +164,33 @@
     <p>Release Date: {{ game.release_date }}</p>
     <p>Rating: {{ game.rating }}</p>
 
+
+    <p>
+  Status:
+  <span
+    class="status-badge"
+    [class.status-backlog]="game.status === 'Backlog'"
+    [class.status-playing]="game.status === 'Playing'"
+    [class.status-completed]="game.status === 'Completed'"
+    [class.status-dropped]="game.status === 'Dropped'"
+  >
+    {{ game.status }}
+  </span>
+</p>
+
+<select
+  [ngModel]="game.status"
+  (ngModelChange)="updateGameStatus(game, $event)"
+  (click)="$event.stopPropagation()"
+>
+  <option value="Backlog">📋 Backlog</option>
+  <option value="Playing">🎮 Playing</option>
+  <option value="Completed">✅ Completed</option>
+  <option value="Dropped">🚫 Dropped</option>
+</select>
+
     <button (click)="startEditing(game)">Edit</button>
-   <button (click)="toggleFavorite(game)">
+   <button (click)="$event.stopPropagation(); toggleFavorite(game)">
   {{ game.favorite ? '⭐' : '☆' }}
 </button>
     <button (click)="deleteGame(game.id)">Delete</button>
@@ -174,6 +219,12 @@
       [(ngModel)]="editGame.platform"
       placeholder="Platform"
     >
+
+    <textarea
+  [(ngModel)]="editGame.notes"
+  placeholder="Write your notes about this game..."
+  rows="5"
+></textarea>
     <button (click)="updateGame(game.id)">Save</button>
     <button (click)="cancelEditing()">Cancel</button>
 
@@ -195,10 +246,19 @@
 
     <p><strong>Rating:</strong> {{ game.rating }}</p>
 
+<div class="game-notes">
+  <strong>📝 Notes</strong>
+
+  <p>
+    {{ game.notes || 'No notes yet.' }}
+  </p>
+</div>
+
   </div>
 
   <hr>
-
+</div>
+</div>
 </div>
 
 <router-outlet />

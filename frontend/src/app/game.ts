@@ -8,5 +8,7 @@ export interface Game {
     image: string | null;
     rawg_id: number | null;
     favorite: boolean;
+    status: string;
+    notes: string | null;
     
 }

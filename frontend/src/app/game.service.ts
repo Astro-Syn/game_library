@@ -24,6 +24,8 @@ export class GameService {
     image: string | null;
     rawg_id: number | null;
     favorite: boolean;
+    status: string;
+    notes: string | null;
   }) {
     return this.http.post<Game>(this.apiUrl, game);
   }
@@ -43,6 +45,8 @@ export class GameService {
     image: string | null;
     rawg_id: number | null;
     favorite: boolean;
+    status: string;
+    notes: string | null;
 
   }
 ) {

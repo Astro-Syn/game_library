@@ -27,6 +27,8 @@ class GameCreate(BaseModel):
     image: str | None = None
     rawg_id: int | None = None
     favorite: bool = False
+    status: str = "Backlog"
+    notes: str | None = None
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,7 +106,9 @@ def create_game(game: GameCreate):
         rating=game.rating,
         image=game.image,
         rawg_id=game.rawg_id,
-        favorite=game.favorite
+        favorite=game.favorite,
+        status=game.status,
+        notes=game.notes
         
     )
 
@@ -147,6 +151,9 @@ def update_game(game_id: int, game: GameCreate):
     existing_game.image = game.image
     existing_game.rawg_id = game.rawg_id
     existing_game.favorite = game.favorite
+    existing_game.status = game.status
+    existing_game.notes = game.notes
+    
 
     db.commit()
     db.refresh(existing_game)

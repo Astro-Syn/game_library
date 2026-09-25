@@ -67,7 +67,9 @@ get libraryGenres(): string[] {
     rating: null as number | null,
     image: '',
     rawg_id: null as number | null,
-    favorite: false
+    favorite: false,
+    status: 'Backlog',
+    notes: null as string | null
   };
 
 
@@ -81,7 +83,9 @@ editGame = {
   rating: null as number | null,
   image: null as string | null,
   rawg_id: null as number | null,
-  favorite: false
+  favorite: false,
+  status: 'Backlog',
+  notes: null as string | null
 
 };
 
@@ -155,7 +159,9 @@ get filteredGames(): Game[] {
         rating: null,
         image: '',
         rawg_id: null,
-        favorite: false
+        favorite: false,
+        status: 'Backlog',
+        notes: null
         
       };
     });
@@ -179,7 +185,26 @@ toggleFavorite(game: Game) {
     rating: game.rating,
     image: game.image,
     rawg_id: game.rawg_id,
-    favorite: game.favorite
+    favorite: game.favorite,
+    status: game.status,
+    notes: game.notes
+  }).subscribe();
+}
+
+updateGameStatus(game: Game, status: string) {
+  game.status = status;
+
+  this.gameService.updateGame(game.id, {
+    title: game.title,
+    genre: game.genre ?? '',
+    platform: game.platform ?? '',
+    release_date: game.release_date,
+    rating: game.rating,
+    image: game.image,
+    rawg_id: game.rawg_id,
+    favorite: game.favorite,
+    status: game.status,
+    notes: game.notes
   }).subscribe();
 }
 
@@ -194,7 +219,9 @@ startEditing(game: Game) {
   rating: game.rating,
   image: game.image,
   rawg_id: game.rawg_id,
-  favorite: game.favorite
+  favorite: game.favorite,
+  status: game.status,
+  notes: game.notes
 };
 }
 
@@ -223,7 +250,9 @@ cancelEditing() {
   rating: null,
   image: null,
   rawg_id: null,
-  favorite: false
+  favorite: false,
+  status: 'Backlog',
+  notes: null
 };
 }
 
@@ -248,7 +277,9 @@ addToLibrary(game: any) {
     rating: game.rating,
     image: game.image,
     rawg_id: game.rawg_id,
-    favorite: false
+    favorite: false,
+    status: 'Backlog',
+    notes: null
   };
 
   this.gameService.addGame(newGame)

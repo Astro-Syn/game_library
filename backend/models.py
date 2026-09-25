@@ -18,3 +18,5 @@ class Game(Base):
     image = Column(String)
     rawg_id = Column(Integer)
     favorite = Column(Boolean, default=False)
+    status = Column(String, default="Backlog")
+    notes = Column(String)
