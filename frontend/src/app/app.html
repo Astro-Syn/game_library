@@ -244,7 +244,9 @@
 
     <p><strong>Release Date:</strong> {{ game.release_date }}</p>
 
-    <p><strong>Rating:</strong> {{ game.rating }}</p>
+    <p class="game-rating">
+  ⭐ {{ game.rating ?? 'N/A' }}
+</p>
 
 <div class="game-notes">
   <strong>📝 Notes</strong>
