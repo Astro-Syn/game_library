@@ -1,8 +1,29 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+
 .app-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 30px;
+  padding-left: 3em;
   box-sizing: border-box;
+ 
+}
+
+.side-border-deco {
+  position: fixed;
+  pointer-events: none;
+  right: 0;
+  top: 0;
+  width: 5vw;
+  height: 100vh;
+  background: white;
+  clip-path: polygon(76% 51%, 76% 21%, 83% 15%, 83% 0, 100% 0, 100% 100%, 83% 100%, 83% 85%, 76% 80%, 76% 56%, 84% 56%, 84% 51%);
 }
 
 .game-card {
@@ -56,7 +77,6 @@
   border-radius: 10px;
   background: #1f2937;
   box-sizing: border-box;
-
   animation: slideIn 0.3s ease;
 }
 
@@ -83,11 +103,12 @@
    ========================= */
 
 button {
+  font-family: "oxanium";
+  letter-spacing: 1px;
   padding: 8px 14px;
   margin: 5px 3px;
   border: none;
-  border-radius: 7px;
-  background: #222;
+  background: rgb(12, 83, 190);
   color: white;
   font-size: 14px;
   cursor: pointer;
@@ -116,6 +137,7 @@ select {
   background: white;
   font-size: 14px;
   cursor: pointer;
+   font-family: "oxanium";
 }
 
 
@@ -124,7 +146,9 @@ select {
    ========================= */
 
 button {
+  clip-path: polygon(0 0, 85% 0, 100% 43%, 100% 100%, 0 100%);
   min-height: 36px;
+  border-radius: 2px;
 }
 
 /* =========================
@@ -246,18 +270,90 @@ textarea:focus {
 :host {
   display: block;
   min-height: 100vh;
-  background: #111827;
+  background: #03060d;
   color: #e5e7eb;
-  font-family: Arial, sans-serif;
+  font-family: "oxanium";
 }
 
-h1 {
-  margin-bottom: 30px;
-  font-size: 36px;
-  font-weight: 700;
+.h1-main {
+  font-family: "Orbitron";
+  font-size: 7em;
+  font-weight: 900;
+  color: white;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  position: relative;
+}
+
+.h1-main::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60%;
+  height: 0.03em;
+  background: black;
+  transform: translateY(-50%);
+}
+
+.side-h1-container {
+  width: 20%;
+  height: 100vh;
+  position: fixed;
+  left: -8em;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.side-h1 {
+  position: absolute;
+  left: -3.3em;
+  top: 50%;
+  font-family: "Orbitron";
+  font-size: 4.5em;
+  font-weight: 900;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  opacity: 0.35;
+  z-index: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: cyberSide 8s ease-in-out infinite;
+}
+
+@keyframes cyberSide {
+
+  /* START: below the screen */
+  0% {
+    transform: translateY(120vh) rotate(-90deg);
+    opacity: 0;
+  }
+
+  /* Entering */
+  0% {
+    transform: translateY(50%) rotate(-90deg);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+
+  /* Leaving */
+  100% {
+    transform: translateY(-120vh) rotate(-90deg);
+    opacity: 0;
+  }
 }
 
 h2 {
+  font-family: "orbitron";
   margin-top: 40px;
   margin-bottom: 20px;
   font-size: 26px;
@@ -281,9 +377,12 @@ input {
   padding: 9px 11px;
   margin: 5px 3px;
   border: 1px solid #ccc;
-  border-radius: 7px;
+  border-radius: 2px;
   font-size: 14px;
   box-sizing: border-box;
+   font-family: "oxanium";
+   background: black;
+   color: white;
 }
 
 input:focus,
@@ -291,6 +390,8 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: #777;
+  color: white;
+  
 }
 
 
@@ -318,21 +419,40 @@ textarea:focus {
 .control-panel {
   margin: 25px 0;
   padding: 22px;
-  background: #1f2937;
-  border: 1px solid #d1d5db;
+  background: #09263644;
   border-radius: 14px;
   box-sizing: border-box;
+  clip-path: polygon(0 93%, 0 7%, 5% 0, 94% 0, 100% 7%, 100% 93%, 96% 100%, 71% 100%, 68% 95%, 36% 95%, 33% 100%, 5% 100%);
+}
+
+.control-panel.search{
+  clip-path: none;
+  border-radius: 2px;
 }
 
 .control-panel h2 {
   margin-top: 0;
   margin-bottom: 18px;
+  font-size: 2em;
+  letter-spacing: 1px;
+  width: 10em;
+  padding: 0.1em;
+  margin-bottom: 1em;
+  -webkit-text-stroke: 1px aqua;
+  -webkit-text-fill-color: transparent;
 }
 
 .control-panel input,
 .control-panel select,
 .control-panel button {
   margin: 5px;
+}
+
+.control-panel-text-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* =========================
