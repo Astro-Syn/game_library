@@ -31,9 +31,11 @@ body {
   padding: 20px;
   margin: 20px 0;
   border: 1px solid #d1d5db;
-  border-radius: 14px;
-  background: #1f2937;
+  border-radius: 2px;
+  background: #0e000d2f;
   box-sizing: border-box;
+   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
@@ -55,7 +57,7 @@ body {
     width: 100%;
     height: 300px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 .game-grid {
@@ -108,7 +110,7 @@ button {
   padding: 8px 14px;
   margin: 5px 3px;
   border: none;
-  background: rgb(12, 83, 190);
+  background: rgb(3, 61, 118);
   color: white;
   font-size: 14px;
   cursor: pointer;
@@ -116,14 +118,21 @@ button {
 }
 
 button:hover {
-  background: #444;
+  background: #010c1f;
   transform: translateY(-1px);
+  color: aqua;
 }
 
 button:active {
   transform: translateY(0);
 }
 
+.card-bottom-button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
 
 /* =========================
    STATUS DROPDOWN
@@ -133,11 +142,13 @@ select {
   padding: 8px 10px;
   margin: 5px 3px;
   border: 1px solid #ccc;
-  border-radius: 7px;
-  background: white;
+  border-radius: 2px;
+  background: black;
+  color: aqua;
   font-size: 14px;
   cursor: pointer;
    font-family: "oxanium";
+   letter-spacing: 1px;
 }
 
 
@@ -391,6 +402,7 @@ textarea:focus {
   outline: none;
   border-color: #777;
   color: white;
+  background: black;
   
 }
 
@@ -402,7 +414,6 @@ textarea:focus {
 .game-grid {
   align-items: start;
 }
-
 
 /* =========================
    EDIT AREA
@@ -453,6 +464,7 @@ textarea:focus {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
 }
 
 /* =========================
@@ -535,6 +547,7 @@ textarea:focus {
   .control-panel button {
     width: 100%;
     margin: 5px 0;
+    
   }
 
   .game-grid {
