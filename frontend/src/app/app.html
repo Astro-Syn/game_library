@@ -1,6 +1,18 @@
-
 <div class="app-container">
-<app-login></app-login>
+<app-login
+  *ngIf="!isLoggedIn"
+  (loginSuccess)="isLoggedIn = true"
+></app-login>
+
+<button
+  *ngIf="isLoggedIn"
+  type="button"
+  (click)="logout()"
+>
+  Logout
+</button>
+
+<div *ngIf="isLoggedIn">
   <!-- ========================= -->
 
   <!-- PAGE HEADER -->
@@ -549,4 +561,5 @@
 
   <router-outlet />
 
+</div>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 
@@ -11,6 +11,8 @@ import { Auth } from '../services/auth';
 })
 export class Login {
 
+  @Output() loginSuccess = new EventEmitter<void>();
+
   username = '';
   password = '';
 
@@ -19,8 +21,9 @@ export class Login {
   login() {
     this.auth.login(this.username, this.password).subscribe({
       next: (response) => {
-        console.log('Login successful!', response);
-      },
+  console.log('Login successful!', response);
+  this.loginSuccess.emit();
+},
       error: (error) => {
         console.error('Login failed:', error);
       }

@@ -8,6 +8,7 @@ import { Game } from './game';
 import { GameService } from './game.service';
 import { MatIconModule } from '@angular/material/icon';
 import { Login } from './login/login';
+import { Auth } from './services/auth';
 
 
 @Component({
@@ -19,7 +20,7 @@ import { Login } from './login/login';
 })
 export class App {
 
-  
+  isLoggedIn = false;
 
   protected readonly title = signal('Game Library');
 
@@ -95,7 +96,17 @@ editGame = {
 
 };
 
-  constructor(private gameService: GameService) {}
+constructor(
+  private gameService: GameService,
+  private auth: Auth
+) {
+  this.isLoggedIn = this.auth.isLoggedIn();
+}
+
+logout() {
+  this.auth.logout();
+  this.isLoggedIn = false;
+}
 
 getGames() {
   this.gameService.getGames()
