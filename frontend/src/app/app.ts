@@ -7,15 +7,19 @@ import { FormsModule } from '@angular/forms';
 import { Game } from './game';
 import { GameService } from './game.service';
 import { MatIconModule } from '@angular/material/icon';
+import { Login } from './login/login';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule, MatIconModule],
+  standalone: true,
+  imports: [RouterOutlet, CommonModule, FormsModule, MatIconModule, Login],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+
+  
 
   protected readonly title = signal('Game Library');
 
@@ -37,6 +41,7 @@ export class App {
   libraryPlatformFilter = '';
   librarySort = '';
   libraryGenreFilter = '';
+  activeView: 'search' | 'library' = 'library';
 
 
   get libraryPlatforms(): string[] {
@@ -92,10 +97,12 @@ editGame = {
 
   constructor(private gameService: GameService) {}
 
-  getGames() {
+getGames() {
   this.gameService.getGames()
     .subscribe(response => {
       this.games = response;
+      this.searchResults = [];
+      this.activeView = 'library';
     });
 }
 
@@ -266,6 +273,7 @@ searchGames() {
   this.gameService.searchGames(this.searchQuery)
     .subscribe(response => {
       this.searchResults = response;
+      this.activeView = 'search';
     });
 }
 

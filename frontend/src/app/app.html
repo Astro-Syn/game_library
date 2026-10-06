@@ -1,10 +1,40 @@
-<div class="app-container">
 
- 
+<div class="app-container">
+<app-login></app-login>
+  <!-- ========================= -->
 
   <!-- PAGE HEADER -->
 
+  <!-- ========================= -->
+   <div class="top-border-deco">
+   </div>
 
+   <div class="links-container">
+  <a href="https://github.com/astro-syn" target="_blank" rel="noopener noreferrer">
+
+    <svg class="github-icon" viewBox="0 0 16 16" width="32" height="32" aria-hidden="true">
+  <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+</svg>
+  </a>
+
+
+
+<!-- About --> 
+ <div class="about-container"> 
+  <span class="about-trigger">About</span> 
+  <div class="about-tooltip"> 
+    <h3>Game Library</h3> 
+    <p> A full-stack game library application where you can search for games, add them to your personal library, track their status, rate them, favorite them, and write personal notes. </p> <p> Built with: </p> 
+    <ul> 
+      <li>Angular</li> 
+      <li>Python + FastAPI</li> 
+      <li>PostgreSQL</li> 
+      <li>SQLAlchemy</li> 
+      <li>RAWG Video Games API</li> 
+    </ul> 
+  </div> 
+</div>
+</div>
 
   <h1 class="h1-main">Game Library</h1>
 
@@ -14,412 +44,505 @@
 
   <div class="side-border-deco"></div>
 
-  
+  <!-- ========================= -->
 
+  <!-- DESKTOP LAYOUT -->
+
+  <!-- ========================= -->
+
+  <div class="library-layout">
+
+
+<!-- ========================= -->
+<!-- LEFT CONTROL SIDEBAR -->
+<!-- ========================= -->
+
+<aside class="control-sidebar">
+
+
+  <!-- ========================= -->
   <!-- ADD A GAME -->
-
-  
+  <!-- ========================= -->
 
   <div class="control-panel">
 
+    <div class="control-panel-text-container">
+      <h2>Add a Game</h2>
+      <mat-icon>add</mat-icon>
+    </div>
 
-<div class="control-panel-text-container">
-  <h2>Add a Game</h2>
-  <mat-icon>add</mat-icon>
-</div>
+    <input
+      type="text"
+      placeholder="Game title"
+      [(ngModel)]="newGame.title"
+    >
 
-<input
-  type="text"
-  placeholder="Game title"
-  [(ngModel)]="newGame.title"
->
+    <input
+      type="text"
+      placeholder="Genre"
+      [(ngModel)]="newGame.genre"
+    >
 
-<input
-  type="text"
-  placeholder="Genre"
-  [(ngModel)]="newGame.genre"
->
+    <input
+      type="text"
+      placeholder="Platform"
+      [(ngModel)]="newGame.platform"
+    >
 
-<input
-  type="text"
-  placeholder="Platform"
-  [(ngModel)]="newGame.platform"
->
-
-<button (click)="addGame()">Add Game</button>
-
+    <button (click)="addGame()">
+      Add Game
+    </button>
 
   </div>
 
-  
 
-  <!-- SEARCH RAWG -->
-
-  
+  <!-- ========================= -->
+  <!-- SEARCH GAMES -->
+  <!-- ========================= -->
 
   <div class="control-panel search">
 
+    <div class="control-panel-text-container">
+      <h2>Search Games</h2>
+      <mat-icon>search</mat-icon>
+    </div>
 
-<div class="control-panel-text-container">
-  <h2>Search Games</h2>
-  <mat-icon>search</mat-icon>
-</div>
+    <input
+      type="text"
+      placeholder="Search for a game..."
+      [(ngModel)]="searchQuery"
+    >
 
-<input
-  type="text"
-  placeholder="Search for a game..."
-  [(ngModel)]="searchQuery"
->
-
-<button (click)="searchGames()">Search</button>
-
-
-<!-- RAWG SEARCH RESULTS -->
-
-<div *ngFor="let game of searchResults">
-
-  <h3>{{ game.title }}</h3>
-
-  <p>Genre: {{ game.genre }}</p>
-
-  <p>Release Date: {{ game.release_date }}</p>
-
-  <p>Rating: {{ game.rating }}</p>
-
-  <img
-    [src]="game.image"
-    [alt]="game.title"
-    width="300"
-  >
-
-  <button (click)="addToLibrary(game)">
-    + Add to My Library
-  </button>
-
-  <hr>
-
-</div>
-
+    <button (click)="searchGames()">
+      Search
+    </button>
 
   </div>
 
-  
 
-  <!-- MY GAMES -->
-
-  
+  <!-- ========================= -->
+  <!-- MY GAMES CONTROLS -->
+  <!-- ========================= -->
 
   <div class="control-panel">
 
-
-<div class="control-panel-text-container">
-  <h2>My Games</h2>
-  <mat-icon>favorite</mat-icon>
-</div>
-
-
-<!-- LIBRARY SEARCH -->
-
-<input
-  type="text"
-  placeholder="Search my games..."
-  [(ngModel)]="librarySearchQuery"
->
+    <div class="control-panel-text-container">
+      <h2>My Games</h2>
+      <mat-icon>favorite</mat-icon>
+    </div>
 
 
-<!-- PLATFORM FILTER -->
+    <!-- LIBRARY SEARCH -->
 
-<select [(ngModel)]="libraryPlatformFilter">
-
-  <option value="">
-    All Platforms
-  </option>
-
-  <option
-    *ngFor="let platform of libraryPlatforms"
-    [value]="platform"
-  >
-    {{ platform }}
-  </option>
-
-</select>
+    <input
+      type="text"
+      placeholder="Search my games..."
+      [(ngModel)]="librarySearchQuery"
+    >
 
 
-<!-- GENRE FILTER -->
+    <!-- PLATFORM FILTER -->
 
-<select [(ngModel)]="libraryGenreFilter">
+    <select [(ngModel)]="libraryPlatformFilter">
 
-  <option value="">
-    All Genres
-  </option>
+      <option value="">
+        All Platforms
+      </option>
 
-  <option
-    *ngFor="let genre of libraryGenres"
-    [value]="genre"
-  >
-    {{ genre }}
-  </option>
+      <option
+        *ngFor="let platform of libraryPlatforms"
+        [value]="platform"
+      >
+        {{ platform }}
+      </option>
 
-</select>
-
-
-<!-- SORT -->
-
-<select [(ngModel)]="librarySort">
-
-  <option value="">
-    Default
-  </option>
-
-  <option value="rating-desc">
-    Rating: High → Low
-  </option>
-
-  <option value="rating-asc">
-    Rating: Low → High
-  </option>
-
-  <option value="title-asc">
-    Title: A → Z
-  </option>
-
-  <option value="title-desc">
-    Title: Z → A
-  </option>
-
-</select>
+    </select>
 
 
-<!-- REFRESH LIBRARY -->
+    <!-- GENRE FILTER -->
 
-<button (click)="getGames()">
-  Refresh Library
-</button>
+    <select [(ngModel)]="libraryGenreFilter">
 
+      <option value="">
+        All Genres
+      </option>
+
+      <option
+        *ngFor="let genre of libraryGenres"
+        [value]="genre"
+      >
+        {{ genre }}
+      </option>
+
+    </select>
+
+
+    <!-- SORT -->
+
+    <select [(ngModel)]="librarySort">
+
+      <option value="">
+        Default
+      </option>
+
+      <option value="rating-desc">
+        Rating: High → Low
+      </option>
+
+      <option value="rating-asc">
+        Rating: Low → High
+      </option>
+
+      <option value="title-asc">
+        Title: A → Z
+      </option>
+
+      <option value="title-desc">
+        Title: Z → A
+      </option>
+
+    </select>
+
+
+    <!-- REFRESH -->
+
+    <button (click)="getGames()">
+      Refresh Library
+    </button>
 
   </div>
 
-  
-
-  <!-- GAME LIBRARY GRID -->
-
-  
-
-  <div class="game-grid">
+</aside>
 
 
-<div
-  class="game-item"
-  *ngFor="let game of filteredGames"
+<!-- ========================= -->
+<!-- RIGHT CONTENT AREA -->
+<!-- ========================= -->
+
+<main class="library-content">
+
+
+  <!-- ========================= -->
+  <!-- RAWG SEARCH RESULTS -->
+  <!-- ========================= -->
+
+ <section
+  class="search-results"
+  *ngIf="activeView === 'search'"
 >
 
-  <!-- GAME CARD -->
+    <div class="results-header">
 
-  <div
-    class="game-card"
-    [class.expanded]="expandedGameId === game.id"
-    (click)="toggleGameInfo(game.id)"
-  >
+      <h2>Search Results</h2>
+
+      <span>
+        {{ searchResults.length }} results
+      </span>
+
+    </div>
 
 
-    
-    <!-- NORMAL GAME CARD -->
-    
+    <div class="search-result-grid">
 
-    <div *ngIf="editingGameId !== game.id">
-
-      <h3>{{ game.title }}</h3>
-
-      <img
-        *ngIf="game.image"
-        [src]="game.image"
-        [alt]="game.title"
-        width="300"
+      <div
+        class="search-result-card"
+        *ngFor="let game of searchResults"
       >
 
-      <p>
-        Genre: {{ game.genre }}
-      </p>
-
-      <p>
-        Platform: {{ game.platform }}
-      </p>
-
-      <p>
-        Release Date: {{ game.release_date }}
-      </p>
-
-      <p>
-        Rating: {{ game.rating }}
-      </p>
-
-
-      <!-- STATUS -->
-
-      <p>
-        Status:
-
-        <span
-          class="status-badge"
-          [class.status-backlog]="game.status === 'Backlog'"
-          [class.status-playing]="game.status === 'Playing'"
-          [class.status-completed]="game.status === 'Completed'"
-          [class.status-dropped]="game.status === 'Dropped'"
+        <img
+          [src]="game.image"
+          [alt]="game.title"
         >
-          {{ game.status }}
-        </span>
-      </p>
 
+        <div class="search-result-content">
 
-      <!-- STATUS SELECT -->
+          <h3>
+            {{ game.title }}
+          </h3>
 
-      <select
-        [ngModel]="game.status"
-        (ngModelChange)="updateGameStatus(game, $event)"
-        (click)="$event.stopPropagation()"
-      >
+          <p>
+            Genre: {{ game.genre }}
+          </p>
 
-        <option value="Backlog">
-          📋 Backlog
-        </option>
+          <p>
+            Release Date: {{ game.release_date }}
+          </p>
 
-        <option value="Playing">
-          🎮 Playing
-        </option>
+          <p>
+            Rating: {{ game.rating }}
+          </p>
 
-        <option value="Completed">
-          ✓ Completed
-        </option>
+          <button
+            (click)="addToLibrary(game)"
+          >
+            + Add to My Library
+          </button>
 
-        <option value="Dropped">
-          ✖ Dropped
-        </option>
-
-      </select>
-
-
-      <!-- CARD BUTTONS -->
-
-      <div class="card-bottom-button-container">
-
-        <button
-          (click)="startEditing(game)"
-        >
-          Edit
-        </button>
-
-        <button
-          (click)="$event.stopPropagation(); toggleFavorite(game)"
-        >
-          {{ game.favorite ? '★' : '☆' }}
-        </button>
-
-        <button
-          (click)="deleteGame(game.id)"
-        >
-          Delete
-        </button>
+        </div>
 
       </div>
 
     </div>
 
+  </section>
 
-    
-    <!-- EDIT GAME -->
-    
 
-    <div *ngIf="editingGameId === game.id">
+  <!-- ========================= -->
+  <!-- MY GAME LIBRARY -->
+  <!-- ========================= -->
 
-      <h3>Edit Game</h3>
+ <section
+  class="my-library"
+  *ngIf="activeView === 'library'"
+>
 
-      <input
-        type="text"
-        [(ngModel)]="editGame.title"
-        placeholder="Game title"
-      >
+    <div class="library-heading">
 
-      <input
-        type="text"
-        [(ngModel)]="editGame.genre"
-        placeholder="Genre"
-      >
+      <h2>My Library</h2>
 
-      <input
-        type="text"
-        [(ngModel)]="editGame.platform"
-        placeholder="Platform"
-      >
-
-      <textarea
-        [(ngModel)]="editGame.notes"
-        placeholder="Write your notes about this game..."
-        rows="5"
-      ></textarea>
-
-      <button
-        (click)="updateGame(game.id)"
-      >
-        Save
-      </button>
-
-      <button
-        (click)="cancelEditing()"
-      >
-        Cancel
-      </button>
+      <span>
+        {{ filteredGames.length }} games
+      </span>
 
     </div>
 
-  </div>
+
+    <!-- GAME GRID -->
+
+    <div class="game-grid">
+
+      <div
+        class="game-item"
+        *ngFor="let game of filteredGames"
+      >
 
 
-  
-  <!-- EXPANDED GAME INFO -->
-  
+        <!-- ========================= -->
+        <!-- GAME CARD -->
+        <!-- ========================= -->
 
-  <div
-    class="game-info"
-    *ngIf="expandedGameId === game.id"
-  >
-
-    <h3>{{ game.title }}</h3>
-
-    <p>
-      <strong>Genre:</strong>
-      {{ game.genre }}
-    </p>
-
-    <p>
-      <strong>Platform:</strong>
-      {{ game.platform }}
-    </p>
-
-    <p>
-      <strong>Release Date:</strong>
-      {{ game.release_date }}
-    </p>
-
-    <p class="game-rating">
-      ⭐ {{ game.rating ?? 'N/A' }}
-    </p>
+        <div
+          class="game-card"
+          [class.expanded]="expandedGameId === game.id"
+          (click)="toggleGameInfo(game.id)"
+        >
 
 
-    <!-- NOTES -->
+          <!-- ========================= -->
+          <!-- NORMAL GAME CARD -->
+          <!-- ========================= -->
 
-    <div class="game-notes">
+          <div *ngIf="editingGameId !== game.id">
 
-      <strong>📝 Notes</strong>
+            <h3>
+              {{ game.title }}
+            </h3>
 
-      <p>
-        {{ game.notes || 'No notes yet.' }}
-      </p>
+            <img
+              *ngIf="game.image"
+              [src]="game.image"
+              [alt]="game.title"
+              width="300"
+            >
+
+            <p>
+              Genre: {{ game.genre }}
+            </p>
+
+            <p>
+              Platform: {{ game.platform }}
+            </p>
+
+            <p>
+              Release Date: {{ game.release_date }}
+            </p>
+
+            <p>
+              Rating: {{ game.rating }}
+            </p>
+
+
+            <!-- STATUS -->
+
+            <p>
+
+              Status:
+
+              <span
+                class="status-badge"
+                [class.status-backlog]="game.status === 'Backlog'"
+                [class.status-playing]="game.status === 'Playing'"
+                [class.status-completed]="game.status === 'Completed'"
+                [class.status-dropped]="game.status === 'Dropped'"
+              >
+                {{ game.status }}
+              </span>
+
+            </p>
+
+
+            <!-- STATUS SELECT -->
+
+            <select
+              [ngModel]="game.status"
+              (ngModelChange)="updateGameStatus(game, $event)"
+              (click)="$event.stopPropagation()"
+            >
+
+              <option value="Backlog">
+                📋 Backlog
+              </option>
+
+              <option value="Playing">
+                🎮 Playing
+              </option>
+
+              <option value="Completed">
+                ✓ Completed
+              </option>
+
+              <option value="Dropped">
+                ✖ Dropped
+              </option>
+
+            </select>
+
+
+            <!-- CARD BUTTONS -->
+
+            <div class="card-bottom-button-container">
+
+              <button
+              class="edit-btn"
+                (click)="$event.stopPropagation(); startEditing(game)"
+              >
+                Edit
+              </button>
+
+              <button
+              class="fav-btn"
+                (click)="$event.stopPropagation(); toggleFavorite(game)"
+              >
+                {{ game.favorite ? '★' : '☆' }}
+              </button>
+
+              <button
+              class="delete-btn"
+                (click)="$event.stopPropagation(); deleteGame(game.id)"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ========================= -->
+          <!-- EDIT GAME -->
+          <!-- ========================= -->
+
+          <div *ngIf="editingGameId === game.id">
+
+            <h3>
+              Edit Game
+            </h3>
+
+            <input
+              type="text"
+              [(ngModel)]="editGame.title"
+              placeholder="Game title"
+            >
+
+            <input
+              type="text"
+              [(ngModel)]="editGame.genre"
+              placeholder="Genre"
+            >
+
+            <input
+              type="text"
+              [(ngModel)]="editGame.platform"
+              placeholder="Platform"
+            >
+
+            <textarea
+              [(ngModel)]="editGame.notes"
+              placeholder="Write your notes about this game..."
+              rows="5"
+            ></textarea>
+
+            <button
+              (click)="$event.stopPropagation(); updateGame(game.id)"
+            >
+              Save
+            </button>
+
+            <button
+              (click)="$event.stopPropagation(); cancelEditing()"
+            >
+              Cancel
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- EXPANDED GAME INFO -->
+        <!-- ========================= -->
+
+        <div
+          class="game-info"
+          *ngIf="expandedGameId === game.id"
+        >
+
+          <h3>
+            {{ game.title }}
+          </h3>
+
+          <p>
+            <strong>Genre:</strong>
+            {{ game.genre }}
+          </p>
+
+          <p>
+            <strong>Platform:</strong>
+            {{ game.platform }}
+          </p>
+
+          <p>
+            <strong>Release Date:</strong>
+            {{ game.release_date }}
+          </p>
+
+          <p class="game-rating">
+            ★ {{ game.rating ?? 'N/A' }}
+          </p>
+
+
+          <!-- NOTES -->
+
+          <div class="game-notes">
+
+            <strong> Notes</strong>
+
+            <p>
+              {{ game.notes || 'No notes yet.' }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
-  </div>
+  </section>
 
-</div>
+</main>
 
 
   </div>
