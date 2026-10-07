@@ -193,6 +193,60 @@ def login_user(user: UserLogin):
     }
 
 
+@app.post("/api/auth/refresh")
+def refresh_access_token(refresh_token: str):
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            JWT_SECRET_KEY,
+            algorithms=["HS256"]
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired refresh token"
+        )
+
+    if payload.get("type") != "refresh":
+        raise HTTPException(
+            status_code=401,
+            detail="Refresh token required"
+        )
+
+    user_id = payload.get("sub")
+
+    if user_id is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid refresh token"
+        )
+
+    db: Session = SessionLocal()
+
+    user = db.query(User).filter(
+        User.id == int(user_id)
+    ).first()
+
+    db.close()
+
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found"
+        )
+
+    access_token = create_token(
+        user_id=user.id,
+        token_type="access",
+        expires_delta=timedelta(minutes=30)
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
 
 app.add_middleware(
     CORSMiddleware,

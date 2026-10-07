@@ -9,6 +9,7 @@ import { GameService } from './game.service';
 import { MatIconModule } from '@angular/material/icon';
 import { Login } from './login/login';
 import { Auth } from './services/auth';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -21,6 +22,7 @@ import { Auth } from './services/auth';
 export class App {
 
   isLoggedIn = false;
+  private logoutSubscription!: Subscription;
 
   protected readonly title = signal('Game Library');
 
@@ -101,6 +103,15 @@ constructor(
   private auth: Auth
 ) {
   this.isLoggedIn = this.auth.isLoggedIn();
+
+  this.logoutSubscription = this.auth.logout$.subscribe(() => {
+    this.isLoggedIn = false;
+    this.games = [];
+  });
+
+  if (this.isLoggedIn) {
+    this.getGames();
+  }
 }
 
 logout() {
@@ -108,9 +119,16 @@ logout() {
   this.isLoggedIn = false;
 }
 
+loginSuccess() {
+  this.isLoggedIn = true;
+  this.getGames();
+}
+
 getGames() {
   this.gameService.getGames()
     .subscribe(response => {
+      
+
       this.games = response;
       this.searchResults = [];
       this.activeView = 'library';

@@ -1,7 +1,7 @@
 <div class="app-container">
 <app-login
   *ngIf="!isLoggedIn"
-  (loginSuccess)="isLoggedIn = true"
+  (loginSuccess)="loginSuccess()"
 ></app-login>
 
 <button

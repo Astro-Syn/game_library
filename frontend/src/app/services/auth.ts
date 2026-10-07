@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { Subject, tap } from 'rxjs';
 
 interface LoginResponse {
   access_token: string;
@@ -12,6 +12,10 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class Auth {
+
+  private logoutSubject = new Subject<void>();
+
+logout$ = this.logoutSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -42,6 +46,29 @@ getAccessToken() {
   return localStorage.getItem('access_token');
 }
 
+
+refreshAccessToken() {
+  const refreshToken = localStorage.getItem('refresh_token');
+
+  return this.http.post<{ access_token: string }>(
+    'http://127.0.0.1:8000/api/auth/refresh',
+    null,
+    {
+      params: {
+        refresh_token: refreshToken ?? ''
+      }
+    }
+  ).pipe(
+    tap(response => {
+      localStorage.setItem(
+        'access_token',
+        response.access_token
+      );
+    })
+  );
+}
+
+
 isLoggedIn() {
   return !!this.getAccessToken();
 }
@@ -49,6 +76,8 @@ isLoggedIn() {
 logout() {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+
+  this.logoutSubject.next();
 }
 
 }
