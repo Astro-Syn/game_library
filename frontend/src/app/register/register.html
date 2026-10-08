@@ -1,1 +1,71 @@
-<p>register works!</p>
+<div class="register-container">
+
+  <h1>Create Account</h1>
+
+  <form (ngSubmit)="register()">
+
+    <label for="username">Username</label>
+
+    <input
+      id="username"
+      type="text"
+      name="username"
+      placeholder="Choose a username"
+      [(ngModel)]="username"
+      required
+    >
+
+    <label for="email">Email</label>
+
+    <input
+      id="email"
+      type="email"
+      name="email"
+      placeholder="Enter your email"
+      [(ngModel)]="email"
+      required
+    >
+
+    <label for="password">Password</label>
+
+    <input
+      id="password"
+      type="password"
+      name="password"
+      placeholder="Choose a password"
+      [(ngModel)]="password"
+      required
+    >
+
+    <label for="confirmPassword">Confirm Password</label>
+
+    <input
+      id="confirmPassword"
+      type="password"
+      name="confirmPassword"
+      placeholder="Confirm your password"
+      [(ngModel)]="confirmPassword"
+      required
+    >
+
+    <p
+      *ngIf="registerError"
+      class="register-error"
+    >
+      {{ registerError }}
+    </p>
+
+    <p
+      *ngIf="registerSuccessMessage"
+      class="register-success"
+    >
+      {{ registerSuccessMessage }}
+    </p>
+
+    <button type="submit">
+      Create Account
+    </button>
+
+  </form>
+
+</div>

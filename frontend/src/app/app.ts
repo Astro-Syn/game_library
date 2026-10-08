@@ -10,18 +10,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { Login } from './login/login';
 import { Auth } from './services/auth';
 import { Subscription } from 'rxjs';
-
+import { Register } from './register/register';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, MatIconModule, Login],
+  imports: [RouterOutlet, CommonModule, FormsModule, MatIconModule, Login, Register],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
 
   isLoggedIn = false;
+  showRegister = false;
+  registrationMessage = '';
+
   private logoutSubscription!: Subscription;
 
   protected readonly title = signal('Game Library');
@@ -122,6 +125,11 @@ logout() {
 loginSuccess() {
   this.isLoggedIn = true;
   this.getGames();
+}
+
+registerSuccess(){
+  this.showRegister = false;
+  this.registrationMessage = 'Account created successfully!';
 }
 
 getGames() {

@@ -1,16 +1,40 @@
 <div class="app-container">
-<app-login
-  *ngIf="!isLoggedIn"
-  (loginSuccess)="loginSuccess()"
-></app-login>
 
-<button
-  *ngIf="isLoggedIn"
-  type="button"
-  (click)="logout()"
->
-  Logout
-</button>
+<div *ngIf="!isLoggedIn">
+
+  <app-login
+    *ngIf="!showRegister"
+    (loginSuccess)="loginSuccess()"
+  ></app-login>
+
+  <app-register
+    *ngIf="showRegister"
+    (registerSuccess)="registerSuccess()"
+  ></app-register>
+
+  <p
+    *ngIf="registrationMessage"
+    class="registration-success"
+  >
+    {{ registrationMessage }}
+  </p>
+
+  <button
+    type="button"
+    (click)="showRegister = !showRegister"
+  >
+    {{ showRegister ? 'Back to Login' : 'Create Account' }}
+  </button>
+
+</div>
+
+  <button
+    *ngIf="isLoggedIn"
+    type="button"
+    (click)="logout()"
+  >
+    Logout
+  </button>
 
 <div *ngIf="isLoggedIn">
   <!-- ========================= -->

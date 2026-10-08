@@ -40,15 +40,17 @@ export class Register {
       this.password
     ).subscribe({
       next: () => {
-        this.registerSuccessMessage = 'Account created successfully!';
+  this.registerSuccessMessage = 'Account created successfully!';
 
-        this.username = '';
-        this.email = '';
-        this.password = '';
-        this.confirmPassword = '';
+  this.username = '';
+  this.email = '';
+  this.password = '';
+  this.confirmPassword = '';
 
-        this.registerSuccess.emit();
-      },
+  setTimeout(() => {
+    this.registerSuccess.emit();
+  }, 2000);
+},
       error: (error) => {
         console.error('Registration failed:', error);
 
