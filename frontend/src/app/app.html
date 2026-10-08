@@ -2,6 +2,8 @@
 
 <div *ngIf="!isLoggedIn">
 
+  
+
   <app-login
     *ngIf="!showRegister"
     (loginSuccess)="loginSuccess()"
@@ -37,6 +39,29 @@
   </button>
 
 <div *ngIf="isLoggedIn">
+
+ <div
+  *ngIf="currentUser"
+  class="account-area"
+>
+
+  <button
+    type="button"
+    class="account-button"
+    (click)="showAccount = !showAccount"
+  >
+    ACCOUNT
+  </button>
+
+  <div
+    *ngIf="showAccount"
+    class="account-info"
+  >
+    <span>{{ currentUser.username }}</span>
+    <span>{{ currentUser.email }}</span>
+  </div>
+
+</div>
   <!-- ========================= -->
 
   <!-- PAGE HEADER -->

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -24,6 +24,13 @@ export class App {
   isLoggedIn = false;
   showRegister = false;
   registrationMessage = '';
+  showAccount = false;
+
+  currentUser: {
+  id: number;
+  username: string;
+  email: string;
+} | null = null;
 
   private logoutSubscription!: Subscription;
 
@@ -70,7 +77,6 @@ get libraryGenres(): string[] {
 }
 
 
-
   newGame = {
     title: '',
     genre: '',
@@ -103,7 +109,8 @@ editGame = {
 
 constructor(
   private gameService: GameService,
-  private auth: Auth
+  private auth: Auth,
+  private cdr: ChangeDetectorRef
 ) {
   this.isLoggedIn = this.auth.isLoggedIn();
 
@@ -112,24 +119,51 @@ constructor(
     this.games = [];
   });
 
-  if (this.isLoggedIn) {
-    this.getGames();
-  }
+ if (this.isLoggedIn) {
+  this.auth.getCurrentUser().subscribe({
+    next: (user) => {
+      this.currentUser = user;
+      this.getGames();
+    },
+    error: () => {
+      this.auth.logout();
+    }
+  });
+}
 }
 
 logout() {
   this.auth.logout();
   this.isLoggedIn = false;
+  this.currentUser = null;
+  this.showAccount = false;
 }
 
 loginSuccess() {
   this.isLoggedIn = true;
-  this.getGames();
+
+  this.auth.getCurrentUser().subscribe({
+    next: (user) => {
+      this.currentUser = user;
+      this.getGames();
+    },
+    error: (error) => {
+      console.error('Failed to get current user:', error);
+    }
+  });
 }
 
-registerSuccess(){
+registerSuccess() {
+
   this.showRegister = false;
+
   this.registrationMessage = 'Account created successfully!';
+
+  setTimeout(() => {
+    this.registrationMessage = '';
+
+    this.cdr.detectChanges();
+  }, 3000);
 }
 
 getGames() {

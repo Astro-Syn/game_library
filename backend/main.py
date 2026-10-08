@@ -109,6 +109,10 @@ class UserLogin(BaseModel):
     password: str
 
 
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+
 @app.post("/api/auth/register")
 def register_user(user: UserCreate):
     db: Session = SessionLocal()
@@ -246,6 +250,52 @@ def refresh_access_token(refresh_token: str):
         "token_type": "bearer"
     }
 
+
+@app.post("/api/auth/change-password")
+def change_password(
+    passwords: ChangePassword,
+    current_user: User = Depends(get_current_user)
+):
+    db: Session = SessionLocal()
+
+    # Check the current password
+    if not password_hash.verify(
+        passwords.current_password,
+        current_user.password_hash
+    ):
+        db.close()
+
+        raise HTTPException(
+            status_code=400,
+            detail="Current password is incorrect"
+        )
+
+    # Hash the new password
+    new_password_hash = password_hash.hash(
+        passwords.new_password
+    )
+
+    # Update the user's password
+    current_user.password_hash = new_password_hash
+
+    db.commit()
+    db.close()
+
+    return {
+        "message": "Password changed successfully"
+    }
+
+
+
+@app.get("/api/auth/me")
+def get_current_user_info(
+    current_user: User = Depends(get_current_user)
+):
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email
+    }
 
 
 app.add_middleware(

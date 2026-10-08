@@ -1,0 +1,10 @@
+.register-error {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border: 1px solid #ff4d6d;
+  background: rgba(255, 77, 109, 0.08);
+  color: #ff4d6d;
+  font-size: 0.9rem;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 77, 109, 0.6);
+}

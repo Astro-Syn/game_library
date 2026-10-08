@@ -46,6 +46,29 @@ getAccessToken() {
   return localStorage.getItem('access_token');
 }
 
+getCurrentUser() {
+  return this.http.get<{
+    id: number;
+    username: string;
+    email: string;
+  }>(
+    'http://127.0.0.1:8000/api/auth/me'
+  );
+}
+
+changePassword(
+  currentPassword: string,
+  newPassword: string
+) {
+  return this.http.post(
+    'http://127.0.0.1:8000/api/auth/change-password',
+    {
+      current_password: currentPassword,
+      new_password: newPassword
+    }
+  );
+}
+
 
 refreshAccessToken() {
   const refreshToken = localStorage.getItem('refresh_token');
