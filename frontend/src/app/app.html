@@ -40,7 +40,7 @@
 
 <div *ngIf="isLoggedIn">
 
- <div
+<div
   *ngIf="currentUser"
   class="account-area"
 >
@@ -57,8 +57,71 @@
     *ngIf="showAccount"
     class="account-info"
   >
+
     <span>{{ currentUser.username }}</span>
     <span>{{ currentUser.email }}</span>
+
+    <button
+      type="button"
+      class="change-password-button"
+      (click)="showChangePassword = !showChangePassword"
+    >
+      {{ showChangePassword ? 'CANCEL' : 'CHANGE PASSWORD' }}
+    </button>
+
+    <form
+      *ngIf="showChangePassword"
+      (ngSubmit)="changePassword()"
+      class="change-password-form"
+    >
+
+      <input
+        type="password"
+        name="currentPassword"
+        placeholder="Current password"
+        [(ngModel)]="currentPassword"
+        required
+      >
+
+      <input
+        type="password"
+        name="newPassword"
+        placeholder="New password"
+        [(ngModel)]="newPassword"
+        required
+      >
+
+      <input
+        type="password"
+        name="confirmNewPassword"
+        placeholder="Confirm new password"
+        [(ngModel)]="confirmNewPassword"
+        required
+      >
+
+      <p
+        *ngIf="passwordError"
+        class="password-error"
+      >
+        {{ passwordError }}
+      </p>
+
+      <p
+        *ngIf="passwordMessage"
+        class="password-success"
+      >
+        {{ passwordMessage }}
+      </p>
+
+    <button
+  type="submit"
+  [disabled]="isChangingPassword"
+>
+  {{ isChangingPassword ? 'UPDATING...' : 'UPDATE PASSWORD' }}
+</button>
+
+    </form>
+
   </div>
 
 </div>

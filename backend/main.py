@@ -251,6 +251,7 @@ def refresh_access_token(refresh_token: str):
     }
 
 
+
 @app.post("/api/auth/change-password")
 def change_password(
     passwords: ChangePassword,
@@ -258,32 +259,41 @@ def change_password(
 ):
     db: Session = SessionLocal()
 
-    # Check the current password
-    if not password_hash.verify(
-        passwords.current_password,
-        current_user.password_hash
-    ):
-        db.close()
+    try:
+        # Load the user into this database session
+        user = db.query(User).filter(
+            User.id == current_user.id
+        ).first()
 
-        raise HTTPException(
-            status_code=400,
-            detail="Current password is incorrect"
+        if user is None:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
+
+        # Check the current password
+        if not password_hash.verify(
+            passwords.current_password,
+            user.password_hash
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Current password is incorrect"
+            )
+
+        # Hash and save the new password
+        user.password_hash = password_hash.hash(
+            passwords.new_password
         )
 
-    # Hash the new password
-    new_password_hash = password_hash.hash(
-        passwords.new_password
-    )
+        db.commit()
 
-    # Update the user's password
-    current_user.password_hash = new_password_hash
+        return {
+            "message": "Password changed successfully"
+        }
 
-    db.commit()
-    db.close()
-
-    return {
-        "message": "Password changed successfully"
-    }
+    finally:
+        db.close()
 
 
 
@@ -360,6 +370,9 @@ def create_game(
 ):
 
     db: Session = SessionLocal()
+
+    print("CURRENT USER ID:", current_user.id)
+    print("CURRENT USERNAME:", current_user.username)
 
     existing_game = None
 

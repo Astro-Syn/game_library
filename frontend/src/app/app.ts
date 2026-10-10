@@ -26,6 +26,18 @@ export class App {
   registrationMessage = '';
   showAccount = false;
 
+  showChangePassword = false;
+
+
+currentPassword = '';
+newPassword = '';
+confirmNewPassword = '';
+
+passwordMessage = '';
+passwordError = '';
+isChangingPassword = false;
+
+
   currentUser: {
   id: number;
   username: string;
@@ -43,7 +55,6 @@ export class App {
     this.expandedGameId = id;
   }
 }
-
 
 
   games: Game[] = [];
@@ -110,7 +121,8 @@ editGame = {
 constructor(
   private gameService: GameService,
   private auth: Auth,
-  private cdr: ChangeDetectorRef
+  private cdr: ChangeDetectorRef,
+  
 ) {
   this.isLoggedIn = this.auth.isLoggedIn();
 
@@ -139,16 +151,21 @@ logout() {
   this.showAccount = false;
 }
 
+
 loginSuccess() {
   this.isLoggedIn = true;
+  this.cdr.markForCheck();
 
   this.auth.getCurrentUser().subscribe({
     next: (user) => {
       this.currentUser = user;
       this.getGames();
+      this.cdr.markForCheck();
     },
+
     error: (error) => {
       console.error('Failed to get current user:', error);
+      this.cdr.markForCheck();
     }
   });
 }
@@ -316,6 +333,56 @@ updateGame(id: number) {
 
       this.cancelEditing();
     });
+}
+
+
+
+
+
+
+changePassword() {
+  this.passwordMessage = '';
+  this.passwordError = '';
+
+  if (this.newPassword !== this.confirmNewPassword) {
+    this.passwordError = 'New passwords do not match.';
+    this.cdr.markForCheck();
+    return;
+  }
+
+  this.isChangingPassword = true;
+  this.cdr.markForCheck();
+
+  this.auth.changePassword(
+    this.currentPassword,
+    this.newPassword
+  ).subscribe({
+    next: () => {
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.confirmNewPassword = '';
+
+      this.isChangingPassword = false;
+      this.passwordMessage = 'Password changed successfully!';
+      this.passwordError = '';
+
+      this.cdr.markForCheck();
+    },
+
+    error: (error) => {
+      this.isChangingPassword = false;
+
+      if (error.status === 400) {
+        this.passwordError =
+          error.error?.detail || 'Current password is incorrect.';
+      } else {
+        this.passwordError =
+          'Something went wrong. Please try again.';
+      }
+
+      this.cdr.markForCheck();
+    }
+  });
 }
 
 cancelEditing() {
