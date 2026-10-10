@@ -131,14 +131,23 @@ constructor(
     this.games = [];
   });
 
- if (this.isLoggedIn) {
+
+if (this.isLoggedIn) {
   this.auth.getCurrentUser().subscribe({
     next: (user) => {
       this.currentUser = user;
       this.getGames();
+
+      this.cdr.markForCheck();
     },
-    error: () => {
+    error: (error) => {
+      console.error('Failed to restore login:', error);
+
       this.auth.logout();
+      this.isLoggedIn = false;
+      this.currentUser = null;
+
+      this.cdr.markForCheck();
     }
   });
 }
