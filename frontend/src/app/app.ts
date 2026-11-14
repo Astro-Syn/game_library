@@ -58,6 +58,7 @@ isChangingPassword = false;
 
 
   games: Game[] = [];
+  randomGames: any[] = [];
   expandedGameId: number | null = null;
   searchResults: any[] = [];
   searchQuery = '';
@@ -151,6 +152,9 @@ if (this.isLoggedIn) {
     }
   });
 }
+if (!this.isLoggedIn) {
+  this.getRandomGames();
+}
 }
 
 logout() {
@@ -201,6 +205,18 @@ getGames() {
       this.searchResults = [];
       this.activeView = 'library';
     });
+}
+
+getRandomGames() {
+  this.gameService.getRandomGames().subscribe({
+    next: (games) => {
+      this.randomGames = games;
+      this.cdr.markForCheck();
+    },
+    error: (error) => {
+      console.error('Error loading random games:', error);
+    }
+  });
 }
 
 

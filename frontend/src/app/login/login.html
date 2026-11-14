@@ -1,38 +1,49 @@
+
 <div class="login-container">
 
-  <h1>Login</h1>
+  <button
+    type="button"
+    class="login-toggle"
+    (click)="showLogin = !showLogin"
+  >
+    {{ showLogin ? 'CANCEL' : 'LOGIN' }}
+  </button>
 
-  <form (ngSubmit)="login()">
+  <div *ngIf="showLogin" class="login-form-container">
 
-    <label for="username">Username</label>
-    <input
-  id="username"
-  type="text"
-  name="username"
-  placeholder="Enter your username"
-  [(ngModel)]="username"
->
+    <h1>Login</h1>
 
-    <label for="password">Password</label>
-    <input
-  id="password"
-  type="password"
-  name="password"
-  placeholder="Enter your password"
-  [(ngModel)]="password"
->
+    <form (ngSubmit)="login()">
 
-<p
-  *ngIf="loginError"
-  class="login-error"
->
-  {{ loginError }}
-</p>
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        name="username"
+        placeholder="Enter your username"
+        [(ngModel)]="username"
+      >
 
-    <button type="submit">
-      Login
-    </button>
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Enter your password"
+        [(ngModel)]="password"
+      >
 
-  </form>
+      <p *ngIf="loginError" class="login-error">
+        {{ loginError }}
+      </p>
+
+      <button type="submit">
+        Login
+      </button>
+
+    </form>
+
+  </div>
 
 </div>
+

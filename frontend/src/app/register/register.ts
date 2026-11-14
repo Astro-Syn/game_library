@@ -20,14 +20,14 @@ export class Register {
   confirmPassword = '';
 
   registerError = '';
-  registerSuccessMessage = '';
+  
 
   constructor(private auth: Auth) {}
 
   register() {
 
     this.registerError = '';
-    this.registerSuccessMessage = '';
+    
 
     if (this.password !== this.confirmPassword) {
       this.registerError = 'Passwords do not match.';
@@ -40,7 +40,7 @@ export class Register {
       this.password
     ).subscribe({
       next: () => {
-  this.registerSuccessMessage = 'Account created successfully!';
+  
 
   this.username = '';
   this.email = '';

@@ -10,7 +10,9 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import os
 import requests
+import random
 from dotenv import load_dotenv
+
 
 
 load_dotenv()
@@ -358,6 +360,56 @@ def search_games(query: str):
     "rating": game["rating"],
     "image": game["background_image"]
 })
+
+       
+@app.get("/api/games/random")
+def get_random_games():
+
+    if not RAWG_API_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="RAWG API key is missing"
+        )
+
+    try:
+        response = requests.get(
+            "https://api.rawg.io/api/games",
+            params={
+                "key": RAWG_API_KEY,
+                "page_size": 40
+            },
+            timeout=15
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        games = []
+
+        for game in data.get("results", []):
+            games.append({
+                "rawg_id": game["id"],
+                "title": game["name"],
+                "genre": ", ".join(
+                    genre["name"]
+                    for genre in game.get("genres", [])
+                ),
+                "release_date": game.get("released"),
+                "rating": game.get("rating"),
+                "image": game.get("background_image")
+            })
+
+        random.shuffle(games)
+
+        return games[:15]
+
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to retrieve games from RAWG"
+        )
+
 
     return games
 

@@ -59,4 +59,10 @@ searchGames(query: string) {
   );
 }
 
+getRandomGames() {
+  return this.http.get<any[]>(
+    'http://localhost:8000/api/games/random'
+  );
+}
+
 }
