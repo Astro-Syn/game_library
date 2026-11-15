@@ -21,7 +21,8 @@ body {
 
 
 .navbar {
-  position: relative;
+  position: fixed;
+ 
   z-index: 1000;
   width: 100%;
   align-self: center;
@@ -355,6 +356,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  min-height: 100vh;
 }
 
 

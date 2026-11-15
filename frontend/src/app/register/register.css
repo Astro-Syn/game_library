@@ -8,3 +8,102 @@
   text-align: center;
   text-shadow: 0 0 8px rgba(255, 77, 109, 0.6);
 }
+
+
+/* REGISTER DROPDOWN */
+
+.register-container {
+  position: relative;
+  display: inline-block;
+}
+
+.register-form-container {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  width: 340px;
+  padding: 28px;
+  box-sizing: border-box;
+
+  background: rgba(8, 15, 22, 0.97);
+  border: 1px solid rgba(0, 255, 255, 0.45);
+  border-radius: 8px;
+
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.15),
+    0 10px 35px rgba(0, 0, 0, 0.6);
+
+  z-index: 1000;
+}
+
+.register-form-container h2 {
+  color: #00ffff;
+  font-size: 22px;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.register-subtitle {
+  color: #9aabb5;
+  font-size: 12px;
+  margin-bottom: 25px;
+}
+
+.register-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-form-container label {
+  color: #c5d5df;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.register-form-container input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 8px;
+
+  background: #101d27;
+  border: 1px solid #29404d;
+  border-radius: 4px;
+
+  color: white;
+  outline: none;
+}
+
+.register-form-container input:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+.register-form-container input::placeholder {
+  color: #647984;
+}
+
+.register-submit {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.register-error {
+  color: #ff6464;
+  font-size: 12px;
+}
+
+.register-success {
+  color: #00ffae;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .register-form-container {
+    width: min(340px, calc(100vw - 30px));
+    right: -10px;
+  }
+}

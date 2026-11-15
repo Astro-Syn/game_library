@@ -4,3 +4,131 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  margin: 0;
+  padding: 9px 14px;
+  border: 1px solid rgba(0, 255, 255, 0.45);
+  border-radius: 2px;
+  background: rgba(0, 255, 255, 0.07);
+  color: #00ffff;
+  font-family: "Oxanium", sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  cursor: pointer;
+  clip-path: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-button:hover {
+  background: rgba(0, 255, 255, 0.16);
+  border-color: aqua;
+  color: white;
+  transform: none;
+}
+
+.nav-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+
+/* LOGIN DROPDOWN */
+
+.login-container {
+  position: relative;
+  display: inline-block;
+}
+
+.login-form-container {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  width: 320px;
+  padding: 28px;
+  box-sizing: border-box;
+
+  background: rgba(8, 15, 22, 0.97);
+  border: 1px solid rgba(0, 255, 255, 0.45);
+  border-radius: 8px;
+
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.15),
+    0 10px 35px rgba(0, 0, 0, 0.6);
+
+  z-index: 1000;
+}
+
+.login-form-container h2 {
+  color: #00ffff;
+  font-size: 22px;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.login-subtitle {
+  color: #9aabb5;
+  font-size: 12px;
+  margin-bottom: 25px;
+}
+
+.login-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-form-container label {
+  color: #c5d5df;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-form-container input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 8px;
+
+  background: #101d27;
+  border: 1px solid #29404d;
+  border-radius: 4px;
+
+  color: white;
+  outline: none;
+}
+
+.login-form-container input:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+.login-form-container input::placeholder {
+  color: #647984;
+}
+
+.login-submit {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.login-error {
+  color: #ff6464;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .login-form-container {
+    width: min(320px, calc(100vw - 30px));
+    right: -10px;
+  }
+}

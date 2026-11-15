@@ -359,7 +359,11 @@ def search_games(query: str):
     "release_date": game["released"],
     "rating": game["rating"],
     "image": game["background_image"]
+
+    
 })
+
+    return games
 
        
 @app.get("/api/games/random")

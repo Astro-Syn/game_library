@@ -3,7 +3,7 @@
 
   <button
     type="button"
-    class="login-toggle"
+    class="nav-button"
     (click)="showLogin = !showLogin"
   >
     {{ showLogin ? 'CANCEL' : 'LOGIN' }}
@@ -11,7 +11,8 @@
 
   <div *ngIf="showLogin" class="login-form-container">
 
-    <h1>Login</h1>
+    <h2>Welcome Back</h2>
+    <p class="login-subtitle">Sign in to access your game library.</p>
 
     <form (ngSubmit)="login()">
 
@@ -37,8 +38,8 @@
         {{ loginError }}
       </p>
 
-      <button type="submit">
-        Login
+      <button type="submit" class="nav-button login-submit">
+        LOGIN
       </button>
 
     </form>
@@ -46,4 +47,3 @@
   </div>
 
 </div>
-
