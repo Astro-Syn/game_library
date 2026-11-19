@@ -1,59 +1,177 @@
+
 html,
 body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  background: #03060d;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
+:host {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #03060d;
+  color: #e5e7eb;
+  font-family: "Oxanium", system-ui, sans-serif;
+}
 
 /* =========================
-   STABLE NAVBAR
+   DESIGN TOKENS
 ========================= */
-.nav-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  background: transparent;
-  height: auto; 
-  
+
+.app-container {
+  --cyan: #00ffff;
+  --cyan-line: rgba(0, 255, 255, 0.25);
+  --cyan-edge: rgba(0, 255, 255, 0.45);
+  --bg: #03060d;
+  --text: #e5e7eb;
+  --muted: #d1d5db;
+  --font-body: "Oxanium", system-ui, sans-serif;
+  --font-display: "Orbitron", "Oxanium", system-ui, sans-serif;
+
+  --gutter: clamp(12px, 3vw, 32px);
+  --gap: clamp(14px, 2vw, 25px);
+  --nav-h: 60px;
+  --bevel: 14px;
 }
 
+/* =========================
+   APP SHELL
+========================= */
+
+.app-container {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0 0 clamp(24px, 4vw, 48px);
+  box-sizing: border-box;
+  overflow-x: clip;
+  background-color: var(--bg);
+}
+
+/* Background art lives on a fixed pseudo-element instead of
+   background-attachment: fixed, which is broken on iOS/Android. */
+.app-container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/Images/game-lib-bg2.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+
+.page-content {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: 0 var(--gutter);
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+p {
+  overflow-wrap: break-word;
+}
+
+h2 {
+  font-family: var(--font-display);
+  margin: 0 0 20px;
+  font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.65rem);
+  color: #f3f4f6;
+}
+
+h3 {
+  margin: 0 0 12px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* =========================
+   DECORATIVE FRAME
+   Only shown where there is room for it.
+========================= */
+
+.top-border-deco {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 4000;
+  width: 100%;
+  height: clamp(56px, 10vh, 110px);
+  background: white;
+  pointer-events: none;
+  clip-path: polygon(0 0, 100% 0, 94% 31%, 72% 30%, 69% 25%, 30% 25%, 28% 31%, 5% 31%);
+}
+
+.side-border-deco,
+.side-h1-container {
+  display: none;
+}
+
+/* =========================
+   NAVBAR
+========================= */
 
 .navbar {
-  position: fixed;
+  position: sticky;
+  top: 0;
   z-index: 1000;
-  width: 97%;
-  align-self: center;
-  padding: 0.3em 1em;
-  border-bottom: 1px solid rgba(0, 255, 255, 0.25);
-  background: rgba(3, 6, 13, 0.532);
+  width: 100%;
+  padding: 0.4rem var(--gutter);
   box-sizing: border-box;
-  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--cyan-line);
+  background: rgba(3, 6, 13, 0.55);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
-.auth-area {
+.nav-container {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 2em;
-  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px 16px;
+  width: 100%;
 }
 
 .nav-links,
 .nav-account {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
+  gap: clamp(6px, 1.5vw, 18px);
+  min-width: 0;
 }
 
 .nav-account {
   margin-left: auto;
   justify-content: flex-end;
-  min-width: 0;
+}
+
+.auth-area {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem clamp(0.75rem, 2vw, 2em);
 }
 
 .nav-link {
@@ -61,19 +179,22 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-height: 40px;
   padding: 8px 10px;
   border: 1px solid transparent;
   background: transparent;
   color: #d7faff;
-  font-family: "Oxanium", sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   letter-spacing: 1px;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  clip-path: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link:focus-visible {
   color: aqua;
   border-color: rgba(0, 255, 255, 0.3);
   background: rgba(0, 255, 255, 0.05);
@@ -81,24 +202,15 @@ body {
 }
 
 .github-icon {
-  width: 20px;
-  height: 20px;
-  filter: none;
-  color: #00ffff;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--cyan);
+  transition: transform 0.2s ease;
 }
 
 .github-link:hover .github-icon {
-  transform: scale(1.08);
-}
-
-.about-container {
-  position: relative;
-  display: inline-flex;
-}
-
-.about-trigger {
-  font: inherit;
-  clip-path: none;
+  transform: scale(1.1);
 }
 
 .nav-button {
@@ -106,23 +218,24 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 38px;
+  min-height: 40px;
   margin: 0;
   padding: 9px 14px;
-  border: 1px solid rgba(0, 255, 255, 0.45);
+  border: 1px solid var(--cyan-edge);
   border-radius: 2px;
   background: rgba(0, 255, 255, 0.07);
-  color: #00ffff;
-  font-family: "Oxanium", sans-serif;
+  color: var(--cyan);
+  font-family: var(--font-body);
   font-size: 12px;
   letter-spacing: 1px;
   white-space: nowrap;
-  cursor: pointer;
   clip-path: none;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.nav-button:hover {
+.nav-button:hover,
+.nav-button:focus-visible {
   background: rgba(0, 255, 255, 0.16);
   border-color: aqua;
   color: white;
@@ -133,6 +246,92 @@ body {
   cursor: wait;
   opacity: 0.6;
 }
+
+.registration-success {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--cyan);
+  background: rgba(0, 255, 255, 0.08);
+  color: var(--cyan);
+  font-size: 0.85rem;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+/* ----- ABOUT TOOLTIP ----- */
+
+.about-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.about-trigger {
+  font-family: var(--font-body);
+  color: white;
+}
+
+.about-trigger:hover {
+  color: aqua;
+}
+
+.about-tooltip {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 0;
+  z-index: 1100;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  padding: 20px;
+  box-sizing: border-box;
+  background: #03060df2;
+  border: 1px solid aqua;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.about-container:hover .about-tooltip,
+.about-container:focus-within .about-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.about-tooltip h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: aqua;
+}
+
+.about-tooltip p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.about-tooltip ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: white;
+  font-size: 14px;
+}
+
+.about-tooltip li {
+  margin-bottom: 5px;
+}
+
+/* ----- ACCOUNT DROPDOWN ----- */
 
 .account-area {
   position: relative;
@@ -149,44 +348,48 @@ body {
   font-size: 16px;
 }
 
-
 .account-info {
   position: absolute;
-  top: calc(100% + 18px);
+  top: calc(100% + 14px);
   right: 0;
   z-index: 1100;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 16px;
   width: 320px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - 24px);
   max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
   overflow-y: auto;
-  box-sizing: border-box;
   margin: 0;
+  padding: 14px 16px;
+  box-sizing: border-box;
   border: 1px solid rgba(0, 255, 255, 0.55);
   background: rgba(3, 6, 13, 0.98);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6),
-              0 0 20px rgba(0, 255, 255, 0.12);
-
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  padding: 10px 16px;
-  color: #00ffff;
-  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.12);
+  color: var(--cyan);
+  font-family: var(--font-display);
   font-size: 0.8rem;
 }
 
+.account-info span:first-child {
+  font-weight: bold;
+}
+
+.account-info span:last-child {
+  opacity: 0.7;
+}
 
 .account-label {
-  color: #00ffff;
+  color: var(--cyan);
   font-size: 10px;
   letter-spacing: 2px;
 }
 
 .account-username {
   color: white;
-  font-family: "Orbitron", sans-serif;
+  font-family: var(--font-display);
   font-size: 17px;
   overflow-wrap: anywhere;
 }
@@ -197,9 +400,9 @@ body {
 }
 
 .account-divider {
+  align-self: stretch;
   height: 1px;
-  margin: 5px 0;
-  background: rgba(0, 255, 255, 0.2);
+  background: var(--cyan-line);
 }
 
 .change-password-button,
@@ -220,8 +423,6 @@ body {
   min-width: 0;
   margin: 0;
   padding: 11px;
-  border: 1px solid rgba(0, 255, 255, 0.25);
-  box-sizing: border-box;
 }
 
 .change-password-form p {
@@ -237,974 +438,145 @@ body {
   color: #6dffc1;
 }
 
-.registration-success {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Keep the About popup above the page */
-
-.about-tooltip {
-  top: calc(100% + 14px);
-  left: 0;
-  right: auto;
-  width: 300px;
-  max-width: calc(100vw - 32px);
-  box-sizing: border-box;
-}
-
-/* Responsive navbar */
-
-
-/* Account controls inside navbar */
-
-.nav-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  
-}
-
-/* ========================= */
-/* CONTENT UNDER NAVBAR */
-/* ========================= */
-
-.page-content {
-  position: relative;
-  width: 100%;
-  flex: 1;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-
-
-.registration-success {
-  width: fit-content;
-  margin: 20px auto;
-  padding: 12px 20px;
-  border: 1px solid #00ffff;
-  background: rgba(0, 255, 255, 0.08);
-  color: #00ffff;
-  font-size: 0.95rem;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-}
-
-
-
-.account-info span:first-child {
-  font-weight: bold;
-}
-
-.account-info span:last-child {
-  opacity: 0.7;
-}
-/* =========================
-   CUSTOM SCROLLBAR
-========================= */
-
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #050505;
-  border-left: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    #00ffff,
-    #008b8b,
-    #00ffff
-  );
-
-  border: 2px solid #050505;
-  border-radius: 2px;
-
-  box-shadow:
-    0 0 6px rgba(0, 255, 255, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    white,
-    #00ffff,
-    #008b8b
-  );
-
-  box-shadow:
-    0 0 10px rgba(0, 255, 255, 0.9);
-}
-
-
-.app-container {
-  padding: 10px;
-  box-sizing: border-box;
-  background-image: url('/Images/game-lib-bg2.png');
-  background-size: 100%;
-  background-repeat: no-repeat;
-  background-position: 115%;
-  background-attachment: fixed;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  min-height: 100vh;
-}
-
-
-.side-border-deco {
-  position: fixed;
-  pointer-events: none;
-  right: 0;
-  top: 0;
-  width: 5vw;
-  height: 100vh;
-  background: white;
-  clip-path: polygon(76% 51%, 76% 21%, 83% 15%, 83% 0, 100% 0, 100% 100%, 83% 100%, 83% 85%, 76% 80%, 76% 56%, 84% 56%, 84% 51%);
-}
-
-.game-card {
-  width: 400px;
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #d1d5db;
-  border-radius: 2px;
-  background: #0e000d2f;
-  box-sizing: border-box;
-   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.game-card p {
-  color: #d1d5db;
-}
-
-.game-card h3 {
-  color: #ffffff;
-}
-
-.game-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-}
-
-.game-card img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 2px;
-}
-
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 25px;
-}
-
-.game-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.game-info {
-  width: 300px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  background: #00303870;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-sizing: border-box;
-  animation: slideIn 0.3s ease;
-  z-index: 30;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.game-card.expanded {
-  width: 500px;
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-
 /* =========================
    BUTTONS
-   ========================= */
+========================= */
 
 button {
-  font-family: "oxanium";
-  letter-spacing: 1px;
-  padding: 8px 14px;
+  min-height: 40px;
   margin: 5px 3px;
+  padding: 8px 14px;
   border: none;
+  border-radius: 2px;
   background: rgb(3, 61, 118);
   color: white;
+  font-family: var(--font-body);
   font-size: 14px;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  clip-path: polygon(0 0, 85% 0, 100% 43%, 100% 100%, 0 100%);
+  transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
 }
 
-button:hover {
+button:focus-visible {
   background: #010c1f;
-  transform: translateY(-1px);
   color: aqua;
 }
 
 button:active {
-  transform: translateY(0);
+  transform: none;
 }
 
-.card-bottom-button-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  
-}
-
-.card-bottom-button-container button {
-  width: 30%;
-}
-
-.edit-btn {
-clip-path: polygon(9% 0, 100% 0, 100% 100%, 9% 100%, 0% 80%, 0% 20%);
-}
-
-.fav-btn {
-clip-path: none;
-}
-
-.delete-btn {
-clip-path: polygon(91% 0, 100% 20%, 100% 80%, 91% 100%, 0 100%, 0 0);
-color: rgb(218, 0, 69);
+@media (hover: hover) {
+  button:hover {
+    background: #010c1f;
+    color: aqua;
+    transform: translateY(-1px);
+  }
 }
 
 /* =========================
-   STATUS DROPDOWN
-   ========================= */
+   FORM FIELDS
+========================= */
 
-select {
-  padding: 8px 10px;
-  margin: 5px 3px;
-  border: 1px solid #ccc;
+input,
+select,
+textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 2px;
   background: black;
-  color: aqua;
+  color: white;
+  font-family: var(--font-body);
   font-size: 14px;
+}
+
+input {
+  margin: 5px 3px;
+  padding: 9px 11px;
+}
+
+select {
+  margin: 5px 3px;
+  padding: 8px 10px;
+  color: aqua;
+  letter-spacing: 1px;
   cursor: pointer;
-   font-family: "oxanium";
-   letter-spacing: 1px;
-}
-
-
-/* =========================
-   FAVORITE BUTTON
-   ========================= */
-
-button {
-  clip-path: polygon(0 0, 85% 0, 100% 43%, 100% 100%, 0 100%);
-  min-height: 36px;
-  border-radius: 2px;
-}
-
-/* =========================
-   FAVORITE BUTTON
-   ========================= */
-
-.favorite-button {
-  width: 42px;
-  height: 36px;
-  padding: 0;
-  font-size: 20px;
-  background: #f3f4f6;
-  color: #555;
-  border: 1px solid #d1d5db;
-}
-
-.favorite-button:hover {
-  background: #e5e7eb;
-  transform: scale(1.05);
-}
-
-.favorite-button.is-favorite {
-  background: #fff4cc;
-  border-color: #f0c36d;
-}
-
-.favorite-button.is-favorite:hover {
-  background: #ffe9a3;
-}
-
-/* =========================
-   STATUS BADGES
-   ========================= */
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 9px;
-  margin-left: 5px;
-  clip-path: polygon(0 0, 100% 2%, 100% 91%, 94% 100%, 0 100%);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* Backlog */
-
-.status-backlog {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-/* Playing */
-
-.status-playing {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-/* Completed */
-
-.status-completed {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-/* Dropped */
-
-.status-dropped {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-/* =========================
-   GAME NOTES
-   ========================= */
-
-.game-notes {
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 2px;
- background: #111827;
-border: 1px solid #374151;
-}
-
-.game-notes strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 15px;
-}
-
-.game-notes p {
-  margin: 0;
-  line-height: 1.5;
-  color: #555;
-  white-space: pre-wrap;
 }
 
 textarea {
   width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
   margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  font-family: inherit;
+  padding: 10px;
   font-size: 14px;
   line-height: 1.5;
   resize: vertical;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: #888;
-}
-
-/* =========================
-   OVERALL PAGE
-   ========================= */
-
-:host {
-  display: block;
-  min-height: 100vh;
-  background: #03060d;
-  color: #e5e7eb;
-  font-family: "oxanium";
-}
-
-.h1-main {
-  font-family: "Orbitron";
-  font-size: 7em;
-  font-weight: 900;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding-left: 2em;
-
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  color: white;
-
-
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    white 0%,
-    white 58%,
-    transparent 58%,
-    transparent 62%,
-    white 62%,
-    white 100%
-  );
-
-  mask-image: linear-gradient(
-    to bottom,
-    white 0%,
-    white 58%,
-    transparent 58%,
-    transparent 62%,
-    white 62%,
-    white 100%
-  );
-
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-.top-border-deco {
-  clip-path: polygon(0 0, 100% 0, 94% 31%, 72% 30%, 69% 25%, 30% 25%, 28% 31%, 5% 31%);
-  width: 100%;
-  background: white;
-  height: 10%;
-  position: fixed;
-  top: 0;
-  z-index: 4000;
-}
-
-.links-container {
-  display: flex;
-  align-items: end;
-  justify-content: end;
-}
-
-.links-container a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  
-}
-
-
-.links-container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.about-container {
-  position: relative;
-  display: inline-block;
-  
-}
-
-.about-trigger {
-  font-family: "Oxanium";
-  color: white;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: color 0.2s ease;
-}
-
-.about-trigger:hover {
-  color: aqua;
-}
-
-
-/* =========================
-   ABOUT TOOLTIP
-   ========================= */
-
-.about-tooltip {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  width: 300px;
-  padding: 20px;
-  background: #03060df2;
-  border: 1px solid aqua;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
-  opacity: 0;
-   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  visibility: hidden;
-  transform: translateY(-8px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    visibility 0.2s ease;
-
-  z-index: 100;
-}
-
-
-/* Show tooltip when hovering About */
-
-.about-container:hover .about-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-
-.about-tooltip h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-
-  font-family: "Orbitron";
-  color: aqua;
-  font-size: 18px;
-}
-
-
-.about-tooltip p {
-  color: #d1d5db;
-  font-family: "Oxanium";
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-
-.about-tooltip ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
-
-  color: white;
-  font-family: "Oxanium";
-  font-size: 14px;
-}
-
-
-.about-tooltip li {
-  margin-bottom: 5px;
-}
-
-
-
-.github-icon {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.github-icon:hover {
-  transform: scale(1.15);
-  opacity: 0.7;
-}
-
-
-.side-h1-container {
-  width: 20%;
-  height: 100vh;
-  position: fixed;
-  left: -8em;
-  top: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.side-h1 {
-  position: absolute;
-  left: -3.3em;
-  top: 50%;
-  font-family: "Orbitron";
-  font-size: 4.5em;
-  font-weight: 900;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: white;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: center;
-  opacity: 0.3;
-  z-index: 0;
-  pointer-events: none;
-  white-space: nowrap;
-  animation: cyberSide 8s ease-in-out infinite;
-}
-
-@keyframes cyberSide {
-
-  /* START: below the screen */
-  0% {
-    transform: translateY(120vh) rotate(-90deg);
-    opacity: 0;
-  }
-
-  /* Entering */
-  0% {
-    transform: translateY(50%) rotate(-90deg);
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 0.3;
-  }
-
-
-  /* Leaving */
-  100% {
-    transform: translateY(-120vh) rotate(-90deg);
-    opacity: 0;
-  }
-}
-
-h2 {
-  font-family: "orbitron";
-  margin-top: 40px;
-  margin-bottom: 20px;
-  font-size: 26px;
-}
-
-h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
-p {
-  line-height: 1.5;
-}
-
-
-/* =========================
-   FORMS
-   ========================= */
-
-input {
-  padding: 9px 11px;
-  margin: 5px 3px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  font-size: 14px;
-  box-sizing: border-box;
-   font-family: "oxanium";
-   background: black;
-   color: white;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #777;
-  color: white;
+  border-color: aqua;
+  box-shadow: 0 0 0 1px rgba(0, 255, 255, 0.35);
   background: black;
+  color: white;
+}
+
+/* 16px on touch screens stops iOS from zooming into fields */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
   }
-
-/* =========================
-   GAME GRID
-   ========================= */
-
-.game-grid {
-  align-items: start;
 }
 
 /* =========================
-   EDIT AREA
-   ========================= */
+   PAGE TITLE
+========================= */
 
-.game-card > div {
-  min-width: 0;
-}
-
-/* =========================
-   CONTROL PANELS
-   ========================= */
-
-.control-panel {
-  margin: 25px 0;
-  padding: 22px;
-  background: #01275578;
-  border-radius: 14px;
-  box-sizing: border-box;
-  backdrop-filter: blur(12px);
-  clip-path: polygon(0 93%, 0 7%, 5% 0, 94% 0, 100% 7%, 100% 93%, 96% 100%, 71% 100%, 68% 95%, 36% 95%, 33% 100%, 5% 100%);
-}
-
-.control-panel.search{
-  border-radius: 2px;
-}
-
-.control-panel h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-  font-size: 1.7em;
-  letter-spacing: 1px;
-  padding: 0.1em;
-  margin-bottom: 1em;
-  -webkit-text-stroke: 1px aqua;
-  -webkit-text-fill-color: transparent;
-}
-
-.control-panel input,
-.control-panel select,
-.control-panel button {
-  margin: 5px;
-}
-
-.control-panel-text-container{
+.h1-main {
+  position: relative;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: start;
-  padding: 0.1em;
-}
-
-
-/* =========================
-   GAME CARD CONTENT
-   ========================= */
-
-.game-card h3 {
-  font-size: 20px;
-  margin-bottom: 14px;
-  line-height: 1.3;
-}
-
-.game-card p {
-  margin: 8px 0;
-}
-
-.game-card img {
-  display: block;
-  margin-bottom: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: clamp(1.25rem, 5vw, 3rem) 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 8.5vw, 6.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  color: white;
+  -webkit-mask-image: linear-gradient(to bottom, white 0%, white 58%, transparent 58%, transparent 62%, white 62%, white 100%);
+  mask-image: linear-gradient(to bottom, white 0%, white 58%, transparent 58%, transparent 62%, white 62%, white 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 /* =========================
-   GAME CARD ACTIONS
-   ========================= */
-
-.game-card button {
-  margin-top: 10px;
-}
-
-/* =========================
-   GAME CARD DETAILS
-   ========================= */
-
-.game-card > div:not(.game-info) {
-  overflow-wrap: break-word;
-}
-
-.game-rating {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* =========================
-   GAME LIBRARY THEME
-   ========================= */
-
-.app-container h1 {
-  color: #ffffff;
-  letter-spacing: 1px;
-}
-
-.app-container h2 {
-  color: #f3f4f6;
-}
-
-
-
-/* =========================
-DESKTOP LIBRARY LAYOUT
+   RANDOM GAME SHOWCASE (logged out)
 ========================= */
-
-.library-layout {
-display: block;
-}
-
-.control-sidebar {
-margin-top: 4em;
-width: 340px;
-background: linear-gradient(to left, black, rgba(0, 0, 0, 0));
-
-
-}
-
-/* Scrollbar width */
-.control-sidebar::-webkit-scrollbar {
-  width: 12px;
-}
-
-/* Scrollbar track */
-.control-sidebar::-webkit-scrollbar-track {
-  background: #050505;
-  border-left: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-/* Scrollbar thumb */
-.control-sidebar::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    #00ffff,
-    #008b8b,
-    #00ffff
-  );
-
-  border: 2px solid #050505;
-  border-radius: 2px;
-
-  box-shadow:
-    0 0 6px rgba(0, 255, 255, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-/* Hover effect */
-.control-sidebar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    white,
-    #00ffff,
-    #008b8b
-  );
-
-  box-shadow:
-    0 0 10px rgba(0, 255, 255, 0.9);
-}
-
-/* Firefox support */
-.control-sidebar {
-  scrollbar-width: thin;
-  scrollbar-color: #00ffff #050505;
-}
-
-.library-content {
-min-width: 0;
-}
-
-/* =========================
-SEARCH RESULTS
-========================= */
-
-.search-results {
-margin-bottom: 40px;
-
-}
-
-.results-header,
-.library-heading {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 20px;
-}
-
-.results-header h2,
-.library-heading h2 {
-margin: 0;
-}
-
-.results-header span,
-.library-heading span {
-font-family: "oxanium";
-color: aqua;
-letter-spacing: 1px;
-}
-
-.search-result-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.search-result-card {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    justify-content: space-between;
-    padding: 1em;
-    border: 1px solid #d1d5db;
-    border-radius: 2px;
-    background: #0e000d2f;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.search-result-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.search-result-content {
-padding: 18px;
-}
-
-.search-result-content h3 {
-margin-top: 0;
-color: white;
-}
-
-.search-result-content p {
-color: #d1d5db;
-}
-
-.search-result-content button {
-margin-top: 10px;
-}
-
-/* =========================
-MY LIBRARY
-========================= */
-
-.my-library {
-margin-top: 30px;
-}
-
-.library-heading {
-margin-bottom: 20px;
-}
-
-
-/* ========================= */
-/* RANDOM GAME SHOWCASE */
-/* ========================= */
 
 .random-games-showcase {
-  width: 100%;
-  overflow: hidden;
   position: relative;
-  margin: 40px 0;
+  width: 100%;
+  margin: clamp(16px, 4vw, 40px) 0;
   padding: 20px 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
 }
 
 .random-games-track {
+  --track-gap: clamp(14px, 2vw, 25px);
   display: flex;
+  gap: var(--track-gap);
+  /* padding equals the gap so the -50% loop lands exactly on the copy */
+  padding-right: var(--track-gap);
   width: max-content;
-  gap: 25px;
   animation: scrollGames 60s linear infinite;
 }
 
@@ -1213,14 +585,16 @@ margin-bottom: 20px;
 }
 
 .random-game-card {
-  width: 180px;
   flex-shrink: 0;
+  width: clamp(120px, 28vw, 180px);
   text-align: center;
 }
 
 .random-game-card img {
-  width: 180px;
-  height: 240px;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
   border: 1px solid rgba(0, 255, 255, 0.4);
   border-radius: 8px;
@@ -1234,279 +608,460 @@ margin-bottom: 20px;
 }
 
 .random-game-card h3 {
+  margin: 10px 0 0;
   color: #fff;
   font-size: 13px;
-  margin-top: 10px;
 }
-
-/* Continuous horizontal scrolling */
 
 @keyframes scrollGames {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
-
 
 /* =========================
-DESKTOP SIDEBAR
+   LIBRARY LAYOUT
+   Phones/tablets: controls stacked above content.
+   Desktop (1024+): sticky sidebar + content.
 ========================= */
 
-@media (min-width: 701px) {
-
-  .app-container {
-padding: 20px 15px;
-}
-
-h1 {
-font-size: 30px;
-}
-
-h2 {
-font-size: 23px;
-}
-
-/* Return everything to normal document flow */
-
 .library-layout {
-display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: start;
+  padding: 0 var(--gutter);
 }
 
 .control-sidebar {
-position: static;
-width: auto;
-height: auto;
-overflow: visible;
-padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: var(--gap);
+  align-items: start;
+  min-width: 0;
+  margin: 0;
 }
 
 .library-content {
-width: 100%;
-padding: 0;
+  min-width: 0;
+  container-type: inline-size;
+  container-name: lib;
 }
 
+/* =========================
+   CONTROL PANELS
+========================= */
+
 .control-panel {
-padding: 16px;
+  margin: 0;
+  padding: clamp(14px, 2.5vw, 22px);
+  box-sizing: border-box;
+  background: #01275578;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  clip-path: polygon(
+    0 calc(100% - var(--bevel)), 0 var(--bevel), var(--bevel) 0,
+    calc(100% - var(--bevel)) 0, 100% var(--bevel),
+    100% calc(100% - var(--bevel)), calc(100% - var(--bevel)) 100%,
+    71% 100%, 68% calc(100% - 10px), 36% calc(100% - 10px), 33% 100%,
+    var(--bevel) 100%
+  );
 }
+
+.control-panel.search {
+  clip-path: none;
+  border-radius: 2px;
+}
+
+.control-panel h2 {
+  margin: 0;
+  padding: 0.1em;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  -webkit-text-stroke: 1px aqua;
+  -webkit-text-fill-color: transparent;
+}
+
+.control-panel-text-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1em;
+  padding: 0.1em;
+}
+
 .control-panel input,
 .control-panel select,
 .control-panel button {
-width: 100%;
-margin: 5px 0;
+  display: block;
+  width: 100%;
+  margin: 6px 0;
 }
 
+/* =========================
+   RESULT / LIBRARY HEADINGS
+========================= */
 
-
-.search-result-card img {
-height: auto;
-max-height: 500px;
-}
-
-.game-grid {
-grid-template-columns: 1fr;
-}
-
-.game-item {
-flex-direction: column;
-}
-
-.game-card {
-width: 100%;
-max-width: 600px;
-}
-
-.game-card img {
-height: auto;
-max-height: 500px;
-}
-
-.game-info {
-width: 100%;
-max-width: 500px;
-}
-
-.favorite-button {
-width: 42px !important;
-}
-
-.library-layout {
-display: grid;
-grid-template-columns: 340px minmax(0, 1fr);
-gap: 40px;
-align-items: start;
-}
-
-.control-sidebar {
-position: fixed;
-left: 30px;
-top: 30px;
-width: 340px;
-height: calc(100vh - 30px);
-overflow-y: auto;
-padding-right: 10px;
-box-sizing: border-box;
-scrollbar-width: thin;
-}
-
-.library-content {
-grid-column: 2;
-min-width: 0;
-padding-right: 60px;
-}
-
-.control-sidebar .control-panel {
-margin-top: 0;
-margin-bottom: 25px;
-}
-
-.control-sidebar .control-panel + .control-panel {
-margin-top: 25px;
-}
-
-.game-grid {
-display: grid;
-grid-template-columns: repeat(
-auto-fit,
-minmax(600px, 2fr)
-);
-gap: 25px;
-align-items: start;
-}
-
-.game-item {
-  position: relative;
+.results-header,
+.library-heading {
   display: flex;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 20px;
 }
 
-.game-info {
-  position: absolute;
-  left: calc(500px + 20px);
-  top: 0;
-
-  width: 300px;
-
-  animation: slideInRight 0.3s ease;
+.results-header h2,
+.library-heading h2 {
+  margin: 0;
 }
 
+.results-header span,
+.library-heading span {
+  color: aqua;
+  letter-spacing: 1px;
 }
 
-/*Tablets*/
+.search-results {
+  margin-bottom: 40px;
+}
 
-@media (max-width: 1280px) {
+/* =========================
+   SEARCH RESULTS
+========================= */
 
-  .side-h1 {
-    display: none;
-  }
-
-  .top-border-deco {
-    height: 5%;
-  }
-
-  .links-container {
-    margin-top: 1em;
-
-  }
-
-  .h1-main {
-    font-size: 4em;
-    margin-top: 2em;
-    margin-left: 2em;
-  }
-
-  .side-border-deco {
-    visibility: hidden;
-  }
-
-  .app-container {
-    margin: 0;
-    padding: 10px;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    
-  }
-
-  .control-sidebar {
-    height: calc(100vh - 40px);
-  }
-
-  
-    .search-result-grid {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+.search-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--gap);
 }
 
 .search-result-card {
-  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 1em;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  background: #0e000d2f;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
+
+.search-result-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.search-result-content {
+  padding: 14px 6px 4px;
+}
+
+.search-result-content h3 {
+  margin-top: 0;
+  color: white;
+}
+
+.search-result-content p {
+  margin: 6px 0;
+  color: var(--muted);
+}
+
+.search-result-content button {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+/* =========================
+   GAME GRID + CARDS
+========================= */
 
 .game-grid {
-    grid-template-columns: 1fr;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--gap);
+  align-items: start;
+}
 
-  .game-item {
-    flex-direction: column;
-  }
+/* card + info panel: stacked by default */
+.game-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
 
-  .game-card {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .game-card img {
-    height: auto;
-    max-height: 500px;
-  }
-
-  .game-info {
-    width: 100%;
-    max-width: 500px;
-  }
-
-    .game-item {
-    flex-direction: column;
-  }
-
-  .game-info {
-    position: static;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 0;
-    animation: slideIn 0.3s ease;
-  }
-
-  .game-card.expanded {
+.game-card {
   width: 100%;
-  max-width: 600px;
-}
-  
+  margin: 0;
+  padding: clamp(14px, 2vw, 20px);
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  background: #0e000d2f;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+.game-card > div {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
 
-@media (max-width: 600px) {
+.game-card h3 {
+  margin-bottom: 14px;
+  font-size: 20px;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.game-card p {
+  margin: 8px 0;
+  color: var(--muted);
+}
+
+.game-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: 16px;
+  border-radius: 2px;
+}
+
+.game-card.expanded {
+  border-color: var(--cyan-edge);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), 0 0 14px rgba(0, 255, 255, 0.12);
+}
+
+@media (hover: hover) {
+  .game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.game-card select {
+  max-width: 100%;
+}
+
+.card-bottom-button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.card-bottom-button-container button,
+.game-card button {
+  margin-top: 0;
+}
+
+.card-bottom-button-container button {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+.edit-btn {
+  clip-path: polygon(9% 0, 100% 0, 100% 100%, 9% 100%, 0% 80%, 0% 20%);
+}
+
+.fav-btn {
+  clip-path: none;
+}
+
+.delete-btn {
+  clip-path: polygon(91% 0, 100% 20%, 100% 80%, 91% 100%, 0 100%, 0 0);
+  color: rgb(218, 0, 69);
+}
+
+.game-card > div:not(.game-info) button {
+  margin-top: 10px;
+}
+
+.card-bottom-button-container button {
+  margin-top: 0;
+}
+
+.favorite-button {
+  width: 42px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #555;
+  font-size: 20px;
+}
+
+.favorite-button.is-favorite {
+  border-color: #f0c36d;
+  background: #fff4cc;
+}
+
+/* ----- STATUS BADGES ----- */
+
+.status-badge {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  clip-path: polygon(0 0, 100% 2%, 100% 91%, 94% 100%, 0 100%);
+}
+
+.status-backlog { background: #e5e7eb; color: #374151; }
+.status-playing { background: #dbeafe; color: #1d4ed8; }
+.status-completed { background: #dcfce7; color: #15803d; }
+.status-dropped { background: #fee2e2; color: #b91c1c; }
+
+/* ----- EXPANDED INFO PANEL ----- */
+
+.game-info {
+  width: 100%;
+  padding: clamp(14px, 2vw, 20px);
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background: #00303870;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: slideDown 0.3s ease;
+}
+
+.game-rating {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.game-notes {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #374151;
+  border-radius: 2px;
+  background: #111827;
+}
+
+.game-notes strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.game-notes p {
+  margin: 0;
+  line-height: 1.5;
+  color: #b6c2cf;
+  white-space: pre-wrap;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* When the content area has room for 2+ columns, an expanded card
+   spans two columns and shows its info panel beside it. */
+@container lib (min-width: 680px) {
+  .game-item:has(> .game-info) {
+    grid-column: span 2;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .game-info {
+    animation-name: slideIn;
+  }
+}
+
+/* =========================
+   SCROLLBARS
+========================= */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+  border-left: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #00ffff, #008b8b, #00ffff);
+  border: 2px solid #050505;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, white, #00ffff, #008b8b);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.9);
+}
+
+.control-sidebar,
+.account-info {
+  scrollbar-width: thin;
+  scrollbar-color: #00ffff #050505;
+}
+
+/* =====================================================================
+   BREAKPOINTS
+   ===================================================================== */
+
+/* ---------- PHONES (up to 639px) ---------- */
+@media (max-width: 639px) {
+  .top-border-deco {
+    display: none;
+  }
+
+  /* A navbar holding login fields can get tall, so let it scroll away
+     on phones. Logged-in navbars are short and stay pinned. */
+  .navbar:has(.auth-area) {
+    position: relative;
+  }
+
   .navbar {
-    width: 100%;
-    padding: 10px 12px;
+    padding-block: 0.2rem;
   }
 
   .nav-container {
-    gap: 10px;
+    gap: 2px 8px;
   }
 
   .nav-links,
-  .nav-account {
-    gap: 6px;
+  .nav-account,
+  .auth-area {
+    gap: 4px 8px;
   }
 
   .nav-link {
-    padding: 8px 6px;
+    min-height: 32px;
+    padding: 4px 6px;
     font-size: 12px;
+  }
+
+  .github-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .github-link span {
@@ -1514,149 +1069,191 @@ align-items: start;
   }
 
   .nav-button {
-    padding: 8px 9px;
-    font-size: 10px;
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .account-button {
     min-width: auto;
   }
 
-  .account-info {
-    right: 0;
-    width: min(320px, calc(100vw - 24px));
-    padding: 16px;
+  .account-area {
+    gap: 6px;
   }
 
-  .about-tooltip {
-    left: 0;
-    width: min(300px, calc(100vw - 24px));
-  }
-}
-
-@media (max-width: 960px) {
-
-  .app-container {
-    margin: 0;
-    padding: 10px;
-    background-size: 200%;
-    
-    
-  }
-}
-
-@media (max-width: 768px) {
-
-  .app-container {
-    background-size: 200%;
-    background-position: 50%;
+  /* Logged out: login form gets its own full-width row under the links.
+     Logged in: links and account buttons share one slim row. */
+  .navbar:has(.auth-area) .nav-account {
+    flex: 1 1 100%;
+    margin-left: 0;
   }
 
-  .h1-main {
-    font-size: 40px;
-    margin-left: 7em;
-  }
-
-  h2 {
-    font-size: 23px;
-  }
-
-  .control-panel {
-    padding: 16px;
-  }
-
-  .control-panel input,
-  .control-panel select,
-  .control-panel button {
+  .auth-area {
+    justify-content: flex-start;
     width: 100%;
-    margin: 5px 0;
   }
 
-  .favorite-button {
-    width: 42px !important;
+  /* Dropdowns span the navbar width instead of overflowing it */
+  .about-container,
+  .account-area {
+    position: static;
+  }
+
+  .about-tooltip,
+  .account-info {
+    top: calc(100% + 8px);
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    max-width: none;
   }
 
   .control-sidebar {
-    background: rgba(0, 0, 0, 0.805);
-    left: 15px;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* =========================
-     GAME INFO BELOW CARD
-     ========================= */
-
-  .game-item {
-    flex-direction: column;
+  .card-bottom-button-container button {
+    padding-inline: 6px;
+    font-size: 13px;
   }
-
-  .game-info {
-    position: static;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 0;
-    animation: slideIn 0.3s ease;
-  }
-
-  .game-card.expanded {
-  width: 100%;
-  max-width: 600px;
-}
 }
 
-@media (max-width: 440px) {
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-    background: #03060d;
-    overflow-x: hidden;
-  }
-
-  .top-border-deco {
-    display: none;
-  }
-
-  .side-border-deco {
-    display: none;
-  }
-
+/* ---------- TABLET AND UP (640px+) ---------- */
+@media (min-width: 640px) {
   .app-container {
-    width: 100%;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-
-    background-size: 300% auto;
-    background-repeat: repeat-y;
-    background-position: center top;
-    background-attachment: scroll;
+    --nav-h: 56px;
   }
+}
 
-  .links-container {
-    padding-top: 1em;
-    padding-right: 1em;
+/* ---------- DESKTOP (1024px+): sticky sidebar ---------- */
+@media (min-width: 1024px) {
+  .app-container {
+    --sidebar-w: clamp(280px, 26vw, 340px);
+    --title-size: clamp(2rem, 5.5vw, 6rem);
+    --title-margin: 1.5rem;
   }
 
   .h1-main {
-    margin: 0;
-    margin-top: 1em;
-    padding: 0;
-    font-size: 2.8em;
-    width: 100%;
-    align-items: start;
-    justify-content: start;
+    font-size: var(--title-size);
+    margin-block: var(--title-margin);
   }
 
-  .control-panel {
-    width: 96vw;
+  /* When logged in, the title moves over the content column so the
+     sidebar can rise up beside it instead of sitting underneath. */
+  .app-container:has(.library-layout) .h1-main {
+    margin-left: calc(var(--sidebar-w) + 40px);
+  }
+
+  .library-layout {
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    gap: 40px;
+    /* pull the layout up by the height of the title block, minus a small gap under the navbar */
+    margin-top: calc(-1 * (var(--title-size) * 1.05 + var(--title-margin) * 2) + 16px);
+  }
+
+  /* Cancel the pull-up for the content column so results and the
+     library start below the title; only the sidebar rises. */
+  .library-content {
+    margin-top: calc(var(--title-size) * 1.05 + var(--title-margin) * 2 - 16px);
+  }
+
+  .control-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: calc(var(--nav-h) + 16px);
+    max-height: calc(100vh - var(--nav-h) - 32px);
+    max-height: calc(100dvh - var(--nav-h) - 32px);
+    overflow-y: auto;
+    padding: 0 10px 0 0;
     box-sizing: border-box;
-    
+    background: linear-gradient(to left, black, rgba(0, 0, 0, 0));
   }
 }
 
+/* ---------- WIDE DESKTOP (1280px+): decorative frame ---------- */
+@media (min-width: 1280px) {
+  .side-border-deco {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    width: 5vw;
+    height: 100vh;
+    height: 100dvh;
+    background: white;
+    pointer-events: none;
+    clip-path: polygon(76% 51%, 76% 21%, 83% 15%, 83% 0, 100% 0, 100% 100%, 83% 100%, 83% 85%, 76% 80%, 76% 56%, 84% 56%, 84% 51%);
+  }
 
+  .side-h1-container {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: -8em;
+    z-index: 0;
+    width: 20%;
+    height: 100vh;
+    pointer-events: none;
+  }
 
+  .side-h1 {
+    position: absolute;
+    top: 50%;
+    left: -3.3em;
+    z-index: 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 4.5em;
+    font-weight: 900;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.3;
+    -webkit-text-stroke: 1px white;
+    -webkit-text-fill-color: transparent;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center;
+    animation: cyberSide 8s ease-in-out infinite;
+  }
+
+  .library-content {
+    padding-right: clamp(0px, 2vw, 40px);
+  }
+}
+
+@keyframes cyberSide {
+  0% {
+    transform: translateY(50%) rotate(-90deg);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(-120vh) rotate(-90deg);
+    opacity: 0;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .random-games-track,
+  .side-h1,
+  .game-info {
+    animation: none;
+  }
+
+  .game-card,
+  .random-game-card img,
+  button,
+  .about-tooltip {
+    transition: none;
+  }
+}
