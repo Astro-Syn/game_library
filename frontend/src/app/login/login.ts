@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 
@@ -19,10 +19,21 @@ export class Login {
   loginError = '';
   showLogin = false;
 
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private cdr: ChangeDetectorRef) {}
+
+loginAsGuest() {
+  this.auth.loginAsGuest();
+  this.showLogin = false;
+  this.loginSuccess.emit();
+}
 
 login() {
   this.loginError = '';
+
+  if (!this.username.trim() || !this.password) {
+    this.loginError = 'Enter your username and password.';
+    return;
+  }
 
   this.auth.login(this.username, this.password).subscribe({
     next: () => {
@@ -36,6 +47,8 @@ login() {
       } else {
         this.loginError = 'Something went wrong. Please try again.';
       }
+
+      this.cdr.markForCheck();
     }
   });
 }

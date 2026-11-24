@@ -109,12 +109,14 @@
           </span>
         </button>
 
+        <span class="guest-badge" *ngIf="isGuest">GUEST</span>
+
         <button
           type="button"
           class="nav-button logout-button"
           (click)="logout()"
         >
-          LOGOUT
+          {{ isGuest ? 'EXIT GUEST' : 'LOGOUT' }}
         </button>
 
         <!-- FLOATING ACCOUNT DROPDOWN -->
@@ -124,10 +126,16 @@
         >
           <span class="account-label">SIGNED IN AS</span>
           <span class="account-username">{{ currentUser.username }}</span>
-          <span class="account-email">{{ currentUser.email }}</span>
+          <span class="account-email" *ngIf="currentUser.email">{{ currentUser.email }}</span>
 
           <div class="account-divider"></div>
 
+          <p class="guest-account-note" *ngIf="isGuest">
+            You're browsing as a guest. Nothing is saved to the server, and your
+            library is cleared when you close this tab. Create an account to keep it.
+          </p>
+
+          <ng-container *ngIf="!isGuest">
           <button
             type="button"
             class="nav-button change-password-button"
@@ -181,6 +189,7 @@
               {{ isChangingPassword ? 'UPDATING...' : 'UPDATE PASSWORD' }}
             </button>
           </form>
+          </ng-container>
         </div>
       </div>
 
@@ -262,6 +271,26 @@
 </section>
 
 <!-- ========================= -->
+<!-- GUEST CALL TO ACTION -->
+<!-- ========================= -->
+
+<section class="guest-cta" *ngIf="!isLoggedIn">
+  <div class="guest-cta-text">
+    <span class="guest-cta-label">JUST LOOKING?</span>
+    <p>
+      Try the full library without signing up. Search games, save them,
+      rate them and check where to buy. Your guest library disappears when
+      you close the tab.
+    </p>
+  </div>
+
+  <button type="button" class="buy-btn guest-cta-button" (click)="continueAsGuest()">
+    <mat-icon>sports_esports</mat-icon>
+    Try it as a Guest
+  </button>
+</section>
+
+<!-- ========================= -->
 <!-- DESKTOP LAYOUT -->
 <!-- ========================= -->
 
@@ -273,6 +302,7 @@
 <!-- ========================= -->
 
 <aside class="control-sidebar">
+<div class="control-sidebar-inner">
 
 
   <!-- ========================= -->
@@ -290,6 +320,7 @@
       type="text"
       placeholder="Game title"
       [(ngModel)]="newGame.title"
+      (keydown.enter)="addGame()"
     >
 
     <input
@@ -326,10 +357,11 @@
       type="text"
       placeholder="Search for a game..."
       [(ngModel)]="searchQuery"
+      (keydown.enter)="searchGames()"
     >
 
-    <button (click)="searchGames()">
-      Search
+    <button (click)="searchGames()" [disabled]="isSearching">
+      {{ isSearching ? 'Searching...' : 'Search' }}
     </button>
 
   </div>
@@ -427,6 +459,11 @@
 
   </div>
 
+  <p class="toast" *ngIf="toastMessage" role="status">
+    {{ toastMessage }}
+  </p>
+
+</div>
 </aside>
 
 
@@ -457,6 +494,10 @@
     </div>
 
 
+    <p class="empty-state" *ngIf="searchResults.length === 0">
+      No games found. Try a different search.
+    </p>
+
     <div class="search-result-grid">
 
       <div
@@ -465,6 +506,7 @@
       >
 
         <img
+          *ngIf="game.image"
           [src]="game.image"
           [alt]="game.title"
         >
@@ -487,11 +529,24 @@
             Rating: {{ game.rating }}
           </p>
 
-          <button
-            (click)="addToLibrary(game)"
-          >
-            + Add to My Library
-          </button>
+          <div class="search-result-actions">
+            <button
+              (click)="addToLibrary(game)"
+              [disabled]="isInLibrary(game)"
+            >
+              {{ isInLibrary(game) ? '✓ In Your Library' : '+ Add to My Library' }}
+            </button>
+
+            <button
+              type="button"
+              class="buy-btn"
+              (click)="openBuyPanel(game)"
+              [attr.aria-label]="'Where to buy ' + game.title"
+            >
+              <mat-icon>shopping_cart</mat-icon>
+              Where to Buy
+            </button>
+          </div>
 
         </div>
 
@@ -523,6 +578,12 @@
 
 
     <!-- GAME GRID -->
+
+    <p class="empty-state" *ngIf="filteredGames.length === 0">
+      {{ games.length === 0
+        ? 'Your library is empty. Search for a game or add one from the sidebar.'
+        : 'No games match your filters.' }}
+    </p>
 
     <div class="game-grid">
 
@@ -650,6 +711,16 @@
 
             </div>
 
+            <button
+              type="button"
+              class="buy-btn"
+              (click)="$event.stopPropagation(); openBuyPanel(game)"
+              [attr.aria-label]="'Where to buy ' + game.title"
+            >
+              <mat-icon>shopping_cart</mat-icon>
+              Where to Buy
+            </button>
+
           </div>
 
 
@@ -657,7 +728,7 @@
           <!-- EDIT GAME -->
           <!-- ========================= -->
 
-          <div *ngIf="editingGameId === game.id">
+          <div *ngIf="editingGameId === game.id" (click)="$event.stopPropagation()">
 
             <h3>
               Edit Game
@@ -760,6 +831,126 @@
 </main>
 
 
+  </div>
+
+  <!-- ========================= -->
+  <!-- WHERE TO BUY PANEL -->
+  <!-- ========================= -->
+
+  <div
+    class="buy-overlay"
+    *ngIf="showBuyPanel"
+    (click)="closeBuyPanel()"
+  >
+    <div
+      class="buy-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="buy-panel-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="buy-panel-header">
+        <div>
+          <span class="buy-panel-label">WHERE TO BUY</span>
+          <h2 id="buy-panel-title">{{ buyGameTitle }}</h2>
+        </div>
+
+        <button
+          type="button"
+          class="buy-close"
+          (click)="closeBuyPanel()"
+          aria-label="Close"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <p class="buy-loading" *ngIf="buyLoading">Checking stores...</p>
+      <p class="password-error" *ngIf="buyError">{{ buyError }}</p>
+
+      <ng-container *ngIf="buyInfo">
+
+        <ng-container *ngIf="buyInfo.best_pc_deal as deal">
+          <ng-template #dealContent>
+            <mat-icon>local_offer</mat-icon>
+            <span>
+              Lowest PC price right now
+              <small *ngIf="deal.store">at {{ deal.store }}</small>
+            </span>
+            <strong>${{ deal.price }}</strong>
+          </ng-template>
+
+          <a
+            *ngIf="deal.url; else dealText"
+            class="buy-deal"
+            [href]="deal.url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ng-container *ngTemplateOutlet="dealContent"></ng-container>
+          </a>
+
+          <ng-template #dealText>
+            <div class="buy-deal">
+              <ng-container *ngTemplateOutlet="dealContent"></ng-container>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <section class="buy-section" *ngIf="buyInfo.digital.length">
+          <h3>Official digital stores</h3>
+          <div class="buy-links">
+            <a
+              *ngFor="let store of buyInfo.digital"
+              [href]="store.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ store.name }}
+              <mat-icon>open_in_new</mat-icon>
+            </a>
+          </div>
+        </section>
+
+        <section class="buy-section">
+          <h3>Shop online</h3>
+          <div class="buy-links">
+            <a
+              *ngFor="let store of buyInfo.online"
+              [href]="store.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ store.name }}
+              <mat-icon>open_in_new</mat-icon>
+            </a>
+          </div>
+        </section>
+
+        <section class="buy-section">
+          <h3>Stores near you</h3>
+          <div class="buy-links">
+            <a
+              *ngFor="let store of buyInfo.nearby"
+              [href]="store.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <mat-icon>place</mat-icon>
+              {{ store.name }}
+            </a>
+          </div>
+        </section>
+
+        <p class="buy-note">
+          Prices and stock change often. Walmart, GameStop and Best Buy show
+          in-store pickup once you pick your local store on their site.
+        </p>
+
+      </ng-container>
+
+    </div>
   </div>
 
   <router-outlet />

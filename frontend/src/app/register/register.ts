@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 
@@ -20,14 +20,19 @@ export class Register {
   confirmPassword = '';
 
   registerError = '';
-  
+  successMessage = '';
 
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private cdr: ChangeDetectorRef) {}
 
   register() {
 
     this.registerError = '';
-    
+    this.successMessage = '';
+
+    if (!this.username.trim() || !this.email.trim() || !this.password) {
+      this.registerError = 'Please fill in every field.';
+      return;
+    }
 
     if (this.password !== this.confirmPassword) {
       this.registerError = 'Passwords do not match.';
@@ -46,6 +51,8 @@ export class Register {
   this.email = '';
   this.password = '';
   this.confirmPassword = '';
+  this.successMessage = 'Account created! Taking you to login...';
+  this.cdr.markForCheck();
 
   setTimeout(() => {
     this.registerSuccess.emit();
@@ -60,6 +67,8 @@ export class Register {
         } else {
           this.registerError = 'Something went wrong. Please try again.';
         }
+
+        this.cdr.markForCheck();
       }
     });
   }

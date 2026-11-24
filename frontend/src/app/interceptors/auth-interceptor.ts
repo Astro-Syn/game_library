@@ -24,7 +24,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (
     error.status !== 401 ||
-    req.url.includes('/api/auth/refresh')
+    req.url.includes('/api/auth/refresh') ||
+    req.url.includes('/api/auth/login') ||
+    req.url.includes('/api/auth/register')
   ) {
     return throwError(() => error);
   }

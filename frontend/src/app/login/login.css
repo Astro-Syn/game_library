@@ -126,6 +126,46 @@
   font-size: 12px;
 }
 
+.guest-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 14px;
+  color: #647984;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.guest-divider::before,
+.guest-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(61, 255, 168, 0.25);
+}
+
+.guest-button {
+  width: 100%;
+  border-color: rgba(61, 255, 168, 0.45);
+  background: rgba(61, 255, 168, 0.08);
+  color: #3dffa8;
+}
+
+.guest-button:hover {
+  border-color: #3dffa8;
+  background: rgba(61, 255, 168, 0.18);
+  color: white;
+}
+
+.guest-hint {
+  margin: 10px 0 0;
+  color: #8a9ba5;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+}
+
 @media (max-width: 480px) {
   .login-form-container {
     width: min(320px, calc(100vw - 30px));

@@ -1,6 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject, tap } from 'rxjs';
+import { Subject, of, tap } from 'rxjs';
+import { API_BASE } from '../api';
+
+// Guest sessions live in sessionStorage: they survive a page refresh
+// but are wiped as soon as the tab is closed, and never touch the database.
+
+export const GUEST_FLAG_KEY = 'guest_session';
+export const GUEST_GAMES_KEY = 'guest_games';
+
+export const GUEST_USER = {
+  id: 0,
+  username: 'Guest',
+  email: ''
+};
 
 interface LoginResponse {
   access_token: string;
@@ -20,8 +33,11 @@ logout$ = this.logoutSubject.asObservable();
   constructor(private http: HttpClient) {}
 
 login(username: string, password: string) {
+  sessionStorage.removeItem(GUEST_FLAG_KEY);
+  sessionStorage.removeItem(GUEST_GAMES_KEY);
+
   return this.http.post<LoginResponse>(
-    'http://127.0.0.1:8000/api/auth/login',
+    `${API_BASE}/auth/login`,
     {
       username: username,
       password: password
@@ -35,7 +51,7 @@ login(username: string, password: string) {
 }
 
 register(username: string, email: string, password: string) {
-  return this.http.post('http://127.0.0.1:8000/api/auth/register', {
+  return this.http.post(`${API_BASE}/auth/register`, {
     username: username,
     email: email,
     password: password
@@ -46,13 +62,29 @@ getAccessToken() {
   return localStorage.getItem('access_token');
 }
 
+loginAsGuest() {
+
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+
+  sessionStorage.setItem(GUEST_FLAG_KEY, '1');
+}
+
+isGuest() {
+  return sessionStorage.getItem(GUEST_FLAG_KEY) === '1';
+}
+
 getCurrentUser() {
+  if (this.isGuest()) {
+    return of(GUEST_USER);
+  }
+
   return this.http.get<{
     id: number;
     username: string;
     email: string;
   }>(
-    'http://127.0.0.1:8000/api/auth/me'
+    `${API_BASE}/auth/me`
   );
 }
 
@@ -61,7 +93,7 @@ changePassword(
   newPassword: string
 ) {
   return this.http.post(
-    'http://127.0.0.1:8000/api/auth/change-password',
+    `${API_BASE}/auth/change-password`,
     {
       current_password: currentPassword,
       new_password: newPassword
@@ -74,7 +106,7 @@ refreshAccessToken() {
   const refreshToken = localStorage.getItem('refresh_token');
 
   return this.http.post<{ access_token: string }>(
-    'http://127.0.0.1:8000/api/auth/refresh',
+    `${API_BASE}/auth/refresh`,
     null,
     {
       params: {
@@ -93,12 +125,14 @@ refreshAccessToken() {
 
 
 isLoggedIn() {
-  return !!this.getAccessToken();
+  return this.isGuest() || !!this.getAccessToken();
 }
 
 logout() {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+  sessionStorage.removeItem(GUEST_FLAG_KEY);
+  sessionStorage.removeItem(GUEST_GAMES_KEY);
 
   this.logoutSubject.next();
 }

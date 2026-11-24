@@ -1,14 +1,4 @@
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  background: #03060d;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
 :host {
   display: block;
   min-height: 100vh;
@@ -18,14 +8,16 @@ body {
   font-family: "Oxanium", system-ui, sans-serif;
 }
 
-/* =========================
-   DESIGN TOKENS
-========================= */
+
 
 .app-container {
   --cyan: #00ffff;
   --cyan-line: rgba(0, 255, 255, 0.25);
   --cyan-edge: rgba(0, 255, 255, 0.45);
+  --green: #3dffa8;
+  --green-soft: rgba(61, 255, 168, 0.12);
+  --green-line: rgba(61, 255, 168, 0.35);
+  --accent-line: linear-gradient(90deg, var(--cyan-line), var(--green-line) 50%, var(--cyan-line));
   --bg: #03060d;
   --text: #e5e7eb;
   --muted: #d1d5db;
@@ -36,6 +28,10 @@ body {
   --gap: clamp(14px, 2vw, 25px);
   --nav-h: 60px;
   --bevel: 14px;
+
+
+  --deco-h: clamp(56px, 10vh, 110px);
+  --deco-band: calc(var(--deco-h) * 0.31);
 }
 
 /* =========================
@@ -55,8 +51,7 @@ body {
   background-color: var(--bg);
 }
 
-/* Background art lives on a fixed pseudo-element instead of
-   background-attachment: fixed, which is broken on iOS/Android. */
+
 .app-container::before {
   content: "";
   position: fixed;
@@ -105,7 +100,6 @@ img {
 
 /* =========================
    DECORATIVE FRAME
-   Only shown where there is room for it.
 ========================= */
 
 .top-border-deco {
@@ -114,7 +108,7 @@ img {
   left: 0;
   z-index: 4000;
   width: 100%;
-  height: clamp(56px, 10vh, 110px);
+  height: var(--deco-h);
   background: white;
   pointer-events: none;
   clip-path: polygon(0 0, 100% 0, 94% 31%, 72% 30%, 69% 25%, 30% 25%, 28% 31%, 5% 31%);
@@ -136,7 +130,8 @@ img {
   width: 100%;
   padding: 0.4rem var(--gutter);
   box-sizing: border-box;
-  border-bottom: 1px solid var(--cyan-line);
+  border-bottom: 1px solid transparent;
+  border-image: var(--accent-line) 1;
   background: rgba(3, 6, 13, 0.55);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
@@ -253,13 +248,13 @@ img {
   margin: 0;
   padding: 6px 12px;
   box-sizing: border-box;
-  border: 1px solid var(--cyan);
-  background: rgba(0, 255, 255, 0.08);
-  color: var(--cyan);
+  border: 1px solid var(--green-line);
+  background: var(--green-soft);
+  color: var(--green);
   font-size: 0.85rem;
   text-align: center;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  text-shadow: 0 0 10px rgba(61, 255, 168, 0.5);
+  box-shadow: 0 0 15px rgba(61, 255, 168, 0.15);
 }
 
 /* ----- ABOUT TOOLTIP ----- */
@@ -402,7 +397,7 @@ img {
 .account-divider {
   align-self: stretch;
   height: 1px;
-  background: var(--cyan-line);
+  background: var(--accent-line);
 }
 
 .change-password-button,
@@ -435,7 +430,7 @@ img {
 }
 
 .password-success {
-  color: #6dffc1;
+  color: var(--green);
 }
 
 /* =========================
@@ -463,12 +458,18 @@ button:focus-visible {
   color: aqua;
 }
 
+button:disabled {
+  cursor: default;
+  opacity: 0.55;
+  transform: none;
+}
+
 button:active {
   transform: none;
 }
 
 @media (hover: hover) {
-  button:hover {
+  button:hover:not(:disabled) {
     background: #010c1f;
     color: aqua;
     transform: translateY(-1px);
@@ -633,12 +634,16 @@ textarea:focus {
 }
 
 .control-sidebar {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+}
+
+.control-sidebar-inner {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
   gap: var(--gap);
   align-items: start;
-  min-width: 0;
-  margin: 0;
 }
 
 .library-content {
@@ -681,6 +686,11 @@ textarea:focus {
   -webkit-text-fill-color: transparent;
 }
 
+.control-panel-text-container mat-icon {
+  color: var(--green);
+  filter: drop-shadow(0 0 6px rgba(61, 255, 168, 0.45));
+}
+
 .control-panel-text-container {
   display: flex;
   flex-direction: row;
@@ -718,10 +728,25 @@ textarea:focus {
   margin: 0;
 }
 
+.results-header,
+.library-heading {
+  padding-bottom: 10px;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--green-line), transparent 70%) 1;
+}
+
 .results-header span,
 .library-heading span {
-  color: aqua;
+  color: var(--green);
   letter-spacing: 1px;
+}
+
+.empty-state {
+  margin: 10px 0 30px;
+  padding: 16px 18px;
+  border-left: 2px solid var(--green-line);
+  background: rgba(3, 6, 13, 0.55);
+  color: var(--muted);
 }
 
 .search-results {
@@ -774,9 +799,16 @@ textarea:focus {
   color: var(--muted);
 }
 
+.search-result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .search-result-content button {
   width: 100%;
-  margin: 12px 0 0;
+  margin: 0;
 }
 
 /* =========================
@@ -846,10 +878,16 @@ textarea:focus {
 }
 
 @media (hover: hover) {
-  .game-card:hover {
+  .game-card:hover,
+  .search-result-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    border-color: var(--green-line);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 12px rgba(61, 255, 168, 0.08);
   }
+}
+
+.search-result-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .game-card select {
@@ -935,8 +973,9 @@ textarea:focus {
   padding: clamp(14px, 2vw, 20px);
   box-sizing: border-box;
   border: 1px solid #ccc;
+  border-left: 2px solid var(--green);
   border-radius: 2px;
-  background: #00303870;
+  background: linear-gradient(135deg, #00303870, rgba(0, 58, 40, 0.44));
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   animation: slideDown 0.3s ease;
@@ -951,6 +990,7 @@ textarea:focus {
   margin-top: 18px;
   padding: 14px;
   border: 1px solid #374151;
+  border-top-color: var(--green-line);
   border-radius: 2px;
   background: #111827;
 }
@@ -978,8 +1018,7 @@ textarea:focus {
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* When the content area has room for 2+ columns, an expanded card
-   spans two columns and shows its info panel beside it. */
+
 @container lib (min-width: 680px) {
   .game-item:has(> .game-info) {
     grid-column: span 2;
@@ -1006,7 +1045,7 @@ textarea:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #00ffff, #008b8b, #00ffff);
+  background: linear-gradient(to bottom, #00ffff, #1fbf8f, #00ffff);
   border: 2px solid #050505;
   border-radius: 2px;
   box-shadow: 0 0 6px rgba(0, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -1017,10 +1056,326 @@ textarea:focus {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.9);
 }
 
-.control-sidebar,
+.control-sidebar-inner,
 .account-info {
   scrollbar-width: thin;
-  scrollbar-color: #00ffff #050505;
+  scrollbar-color: #2fe0c0 #050505;
+}
+
+/* =========================
+   GUEST MODE
+========================= */
+
+.guest-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  width: min(900px, calc(100% - 2 * var(--gutter)));
+  margin: 0 auto clamp(24px, 4vw, 40px);
+  padding: clamp(16px, 2.5vw, 24px);
+  box-sizing: border-box;
+  border: 1px solid var(--green-line);
+  border-left: 3px solid var(--green);
+  background: rgba(3, 14, 12, 0.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.guest-cta-text {
+  flex: 1 1 320px;
+}
+
+.guest-cta-label {
+  color: var(--green);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.guest-cta-text p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.guest-cta .guest-cta-button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 220px;
+  margin: 0;
+  padding-inline: 22px;
+}
+
+.guest-badge {
+ 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--green-line);
+  border-radius: 2px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.guest-account-note {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+  .guest-cta .guest-cta-button {
+    width: 100%;
+  }
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--green-line);
+  background: rgba(3, 20, 14, 0.85);
+  color: var(--green);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  animation: slideDown 0.25s ease;
+}
+
+/* =========================
+   WHERE TO BUY
+========================= */
+
+.buy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid var(--green-line);
+  background: var(--green-soft);
+  color: var(--green);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.buy-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.game-card .buy-btn {
+  margin: 10px 0 0;
+}
+
+@media (hover: hover) {
+  .buy-btn:hover:not(:disabled) {
+    background: rgba(61, 255, 168, 0.22);
+    color: white;
+  }
+}
+
+.buy-btn:focus-visible {
+  background: rgba(61, 255, 168, 0.22);
+  color: white;
+}
+
+.buy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter);
+  background: rgba(1, 4, 9, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease;
+}
+
+.buy-panel {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100dvh - 2 * var(--gutter));
+  overflow-y: auto;
+  padding: clamp(18px, 3vw, 28px);
+  box-sizing: border-box;
+  border: 1px solid var(--cyan-edge);
+  background: rgba(3, 6, 13, 0.97);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 24px rgba(61, 255, 168, 0.1);
+  clip-path: polygon(
+    0 var(--bevel), var(--bevel) 0, 100% 0,
+    100% calc(100% - var(--bevel)), calc(100% - var(--bevel)) 100%, 0 100%
+  );
+  scrollbar-width: thin;
+  scrollbar-color: #2fe0c0 #050505;
+  animation: slideDown 0.25s ease;
+}
+
+.buy-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--bevel);
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+}
+
+.buy-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.buy-panel-header h2 {
+  margin: 4px 0 0;
+  color: white;
+}
+
+.buy-panel-label {
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.buy-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 1px solid var(--cyan-line);
+  color: var(--cyan);
+  clip-path: none;
+}
+
+.buy-loading {
+  color: var(--muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.buy-deal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--green-line);
+  background: var(--green-soft);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.buy-deal mat-icon {
+  color: var(--green);
+}
+
+.buy-deal strong {
+  margin-left: auto;
+  color: var(--green);
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.buy-deal small {
+  display: block;
+  color: #8a9ba5;
+  font-size: 12px;
+}
+
+a.buy-deal:hover,
+a.buy-deal:focus-visible {
+  background: rgba(61, 255, 168, 0.2);
+}
+
+.buy-section {
+  margin-bottom: 18px;
+}
+
+.buy-section h3 {
+  margin: 0 0 10px;
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.buy-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.buy-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(0, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.buy-links a mat-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--green);
+  opacity: 0.8;
+}
+
+.buy-links a:hover,
+.buy-links a:focus-visible {
+  outline: none;
+  border-color: var(--green-line);
+  background: var(--green-soft);
+  color: white;
+}
+
+.buy-note {
+  margin: 4px 0 0;
+  color: #8a9ba5;
+  font-size: 12px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 /* =====================================================================
@@ -1033,8 +1388,6 @@ textarea:focus {
     display: none;
   }
 
-  /* A navbar holding login fields can get tall, so let it scroll away
-     on phones. Logged-in navbars are short and stay pinned. */
   .navbar:has(.auth-area) {
     position: relative;
   }
@@ -1082,8 +1435,7 @@ textarea:focus {
     gap: 6px;
   }
 
-  /* Logged out: login form gets its own full-width row under the links.
-     Logged in: links and account buttons share one slim row. */
+
   .navbar:has(.auth-area) .nav-account {
     flex: 1 1 100%;
     margin-left: 0;
@@ -1094,7 +1446,6 @@ textarea:focus {
     width: 100%;
   }
 
-  /* Dropdowns span the navbar width instead of overflowing it */
   .about-container,
   .account-area {
     position: static;
@@ -1109,8 +1460,14 @@ textarea:focus {
     max-width: none;
   }
 
-  .control-sidebar {
+  .control-sidebar-inner {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guest-badge {
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .card-bottom-button-container button {
@@ -1122,7 +1479,13 @@ textarea:focus {
 /* ---------- TABLET AND UP (640px+) ---------- */
 @media (min-width: 640px) {
   .app-container {
-    --nav-h: 56px;
+    --nav-h: calc(var(--deco-band) + 64px);
+  }
+
+  /* Start the nav content below the white top decoration */
+  .navbar {
+    padding-top: calc(var(--deco-band) + 10px);
+    padding-bottom: 0.6rem;
   }
 }
 
@@ -1139,8 +1502,6 @@ textarea:focus {
     margin-block: var(--title-margin);
   }
 
-  /* When logged in, the title moves over the content column so the
-     sidebar can rise up beside it instead of sitting underneath. */
   .app-container:has(.library-layout) .h1-main {
     margin-left: calc(var(--sidebar-w) + 40px);
   }
@@ -1148,27 +1509,32 @@ textarea:focus {
   .library-layout {
     grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
     gap: 40px;
-    /* pull the layout up by the height of the title block, minus a small gap under the navbar */
-    margin-top: calc(-1 * (var(--title-size) * 1.05 + var(--title-margin) * 2) + 16px);
+
+    
+    margin-top: calc(-1 * (var(--title-size) * 1.05 + var(--title-margin) * 2));
   }
 
-  /* Cancel the pull-up for the content column so results and the
-     library start below the title; only the sidebar rises. */
   .library-content {
-    margin-top: calc(var(--title-size) * 1.05 + var(--title-margin) * 2 - 16px);
+    margin-top: calc(var(--title-size) * 1.05 + var(--title-margin) * 2);
   }
 
+ 
   .control-sidebar {
+    position: sticky;
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+    height: calc(100dvh - var(--nav-h));
+    background: linear-gradient(to left, black, rgba(0, 0, 0, 0));
+  }
+
+  .control-sidebar-inner {
     display: flex;
     flex-direction: column;
-    position: sticky;
-    top: calc(var(--nav-h) + 16px);
-    max-height: calc(100vh - var(--nav-h) - 32px);
-    max-height: calc(100dvh - var(--nav-h) - 32px);
+    align-items: stretch;
+    height: 100%;
     overflow-y: auto;
-    padding: 0 10px 0 0;
+    padding: 22px 20px 26px 16px;
     box-sizing: border-box;
-    background: linear-gradient(to left, black, rgba(0, 0, 0, 0));
   }
 }
 
@@ -1179,7 +1545,7 @@ textarea:focus {
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 1;
+    z-index: 4000;
     width: 5vw;
     height: 100vh;
     height: 100dvh;
@@ -1246,7 +1612,11 @@ textarea:focus {
 @media (prefers-reduced-motion: reduce) {
   .random-games-track,
   .side-h1,
-  .game-info {
+  .game-info,
+  .buy-overlay,
+  .buy-panel,
+  .buy-loading,
+  .toast {
     animation: none;
   }
 

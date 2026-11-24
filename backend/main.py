@@ -11,6 +11,8 @@ import jwt
 import os
 import requests
 import random
+import re
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
 
@@ -129,6 +131,13 @@ def register_user(user: UserCreate):
         raise HTTPException(
             status_code=400,
             detail="Username or email already exists"
+        )
+
+    if not user.username.strip() or not user.password:
+        db.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Username and password are required"
         )
 
     hashed_password = password_hash.hash(user.password)
@@ -336,36 +345,46 @@ def hello():
 @app.get("/api/games/search")
 def search_games(query: str):
 
-    url = "https://api.rawg.io/api/games"
+    if not RAWG_API_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="RAWG API key is missing"
+        )
 
-    params = {
-        "key": RAWG_API_KEY,
-        "search": query
-    }
-
-    response = requests.get(url, params=params)
-
-    data = response.json()
+    try:
+        response = requests.get(
+            "https://api.rawg.io/api/games",
+            params={
+                "key": RAWG_API_KEY,
+                "search": query
+            },
+            timeout=15
+        )
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to search games on RAWG"
+        )
 
     games = []
 
-    for game in data["results"]:
-       games.append({
-    "rawg_id": game["id"],
-    "title": game["name"],
-    "genre": ", ".join(
-        genre["name"] for genre in game["genres"]
-    ),
-    "release_date": game["released"],
-    "rating": game["rating"],
-    "image": game["background_image"]
-
-    
-})
+    for game in data.get("results", []):
+        games.append({
+            "rawg_id": game["id"],
+            "title": game["name"],
+            "genre": ", ".join(
+                genre["name"] for genre in game.get("genres") or []
+            ),
+            "release_date": game.get("released"),
+            "rating": game.get("rating"),
+            "image": game.get("background_image")
+        })
 
     return games
 
-       
+
 @app.get("/api/games/random")
 def get_random_games():
 
@@ -415,9 +434,6 @@ def get_random_games():
         )
 
 
-    return games
-
-
 
 @app.post("/api/games")
 def create_game(
@@ -425,15 +441,21 @@ def create_game(
     current_user: User = Depends(get_current_user)
 ):
 
-    db: Session = SessionLocal()
+    if not game.title.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Game title is required"
+        )
 
-    print("CURRENT USER ID:", current_user.id)
-    print("CURRENT USERNAME:", current_user.username)
+    db: Session = SessionLocal()
 
     existing_game = None
 
     if game.rawg_id is not None:
-        existing_game = db.query(Game).filter(Game.rawg_id == game.rawg_id).first()
+        existing_game = db.query(Game).filter(
+            Game.rawg_id == game.rawg_id,
+            Game.user_id == current_user.id
+        ).first()
 
     if existing_game:
         db.close()
@@ -494,7 +516,10 @@ def update_game(
 
     if existing_game is None:
         db.close()
-        return {"error": "Game not found"}
+        raise HTTPException(
+            status_code=404,
+            detail="Game not found"
+        )
 
     existing_game.title = game.title
     existing_game.genre = game.genre
@@ -530,7 +555,10 @@ def delete_game(
 
     if existing_game is None:
         db.close()
-        return {"error": "Game not found"}
+        raise HTTPException(
+            status_code=404,
+            detail="Game not found"
+        )
 
     db.delete(existing_game)
     db.commit()
@@ -538,3 +566,202 @@ def delete_game(
     db.close()
 
     return {"message": "Game deleted successfully"}
+
+
+# =========================
+# WHERE TO BUY
+# =========================
+
+# RAWG store ids -> display names
+RAWG_STORES = {
+    1: "Steam",
+    2: "Xbox Store",
+    3: "PlayStation Store",
+    4: "App Store",
+    5: "GOG",
+    6: "Nintendo eShop",
+    7: "Xbox 360 Store",
+    8: "Google Play",
+    9: "itch.io",
+    11: "Epic Games Store",
+}
+
+# Store links that don't work reliably for users
+HIDDEN_RAWG_STORES = {3}
+
+# CheapShark asks clients to identify themselves
+CHEAPSHARK_HEADERS = {"User-Agent": "GameLibrary/1.0 (personal project)"}
+
+
+def normalize_title(title: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", title.lower())
+
+
+def retailer_links(title: str):
+    q = quote_plus(title)
+    q_game = quote_plus(f"{title} video game")
+
+    online = [
+        {"name": "Walmart", "url": f"https://www.walmart.com/search?q={q_game}"},
+        {"name": "GameStop", "url": f"https://www.gamestop.com/search/?q={q}"},
+        {"name": "Best Buy", "url": f"https://www.bestbuy.com/site/searchpage.jsp?st={q}"},
+        {"name": "Target", "url": f"https://www.target.com/s?searchTerm={q_game}"},
+    ]
+
+    nearby = [
+        {"name": "Game stores near me", "url": "https://www.google.com/maps/search/video+game+store+near+me"},
+        {"name": "Walmart near me", "url": "https://www.google.com/maps/search/Walmart+near+me"},
+        {"name": "GameStop near me", "url": "https://www.google.com/maps/search/GameStop+near+me"},
+        {"name": "Best Buy near me", "url": "https://www.google.com/maps/search/Best+Buy+near+me"},
+    ]
+
+    return online, nearby
+
+
+def digital_stores(rawg_id: int | None):
+    if not rawg_id or not RAWG_API_KEY:
+        return []
+
+    try:
+        response = requests.get(
+            f"https://api.rawg.io/api/games/{rawg_id}/stores",
+            params={"key": RAWG_API_KEY},
+            timeout=10
+        )
+        response.raise_for_status()
+        results = response.json().get("results", [])
+    except (requests.RequestException, ValueError):
+        return []
+
+    stores = []
+    for store in results:
+        url = store.get("url")
+        # PlayStation links from RAWG point at retired store pages
+        if not url or store.get("store_id") in HIDDEN_RAWG_STORES:
+            continue
+        stores.append({
+            "name": RAWG_STORES.get(store.get("store_id"), "Store"),
+            "url": url
+        })
+
+    return stores
+
+
+_cheapshark_store_names: dict[str, str] = {}
+
+
+def cheapshark_store_names() -> dict[str, str]:
+    """CheapShark store id -> name, fetched once and kept in memory."""
+    if _cheapshark_store_names:
+        return _cheapshark_store_names
+
+    try:
+        response = requests.get(
+            "https://www.cheapshark.com/api/1.0/stores",
+            headers=CHEAPSHARK_HEADERS,
+            timeout=10
+        )
+        response.raise_for_status()
+        for store in response.json():
+            _cheapshark_store_names[str(store["storeID"])] = store["storeName"]
+    except (requests.RequestException, ValueError, KeyError):
+        pass
+
+    return _cheapshark_store_names
+
+
+def lowest_pc_price(title: str, digital: list[dict]):
+    """
+    Cheapest current PC price, with a link straight to the store selling it.
+
+    CheapShark's own redirect links sit behind a bot check that never
+    finishes in a normal browser, so they are never handed to the user.
+    """
+    try:
+        response = requests.get(
+            "https://www.cheapshark.com/api/1.0/games",
+            params={"title": title, "limit": 10},
+            headers=CHEAPSHARK_HEADERS,
+            timeout=10
+        )
+        response.raise_for_status()
+        results = response.json()
+    except (requests.RequestException, ValueError):
+        return None
+
+    wanted = normalize_title(title)
+
+    # Only trust an exact title match; CheapShark's search is fuzzy
+    match = next(
+        (g for g in results if normalize_title(g.get("external", "")) == wanted),
+        None
+    )
+
+    if match is None:
+        return None
+
+    try:
+        response = requests.get(
+            "https://www.cheapshark.com/api/1.0/games",
+            params={"id": match["gameID"]},
+            headers=CHEAPSHARK_HEADERS,
+            timeout=10
+        )
+        response.raise_for_status()
+        details = response.json()
+    except (requests.RequestException, ValueError, KeyError):
+        return None
+
+    deals = details.get("deals") or []
+    if not deals:
+        return None
+
+    best = min(deals, key=lambda d: float(d.get("price", "inf")))
+    store_name = cheapshark_store_names().get(str(best.get("storeID")), "")
+
+    # Find a direct link to that store: Steam from its app id,
+    # anything else from RAWG's official store links.
+    url = None
+    steam_app_id = match.get("steamAppID") or details.get("info", {}).get("steamAppID")
+
+    if store_name == "Steam" and steam_app_id:
+        url = f"https://store.steampowered.com/app/{steam_app_id}/"
+    else:
+        wanted_store = normalize_title(store_name)
+        for store in digital:
+            name = normalize_title(store["name"])
+            if wanted_store and (wanted_store in name or name in wanted_store):
+                url = store["url"]
+                break
+
+    return {
+        "price": best.get("price"),
+        "store": store_name or None,
+        "url": url
+    }
+
+
+# Public, like search: guests use it too, and it only returns links
+@app.get("/api/games/where-to-buy")
+def where_to_buy(
+    title: str,
+    rawg_id: int | None = None
+):
+    title = title.strip()
+
+    if not title:
+        raise HTTPException(
+            status_code=400,
+            detail="Game title is required"
+        )
+
+    online, nearby = retailer_links(title)
+    digital = digital_stores(rawg_id)
+
+    return {
+        "title": title,
+        "digital": digital,
+        "online": online,
+        "nearby": nearby,
+        "best_pc_deal": lowest_pc_price(title, digital)
+    }
